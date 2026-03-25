@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Foto - FotoBlog de Jose</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #faf9f7;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --accent: #c9302c;
+            --border: #e5e4e2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 0;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--accent); }
+
+        main { max-width: 600px; margin: 0 auto; padding: 3rem 2rem; }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .upload-form {
+            background: var(--bg-secondary);
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        .file-drop {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-primary);
+        }
+
+        .file-drop:hover { border-color: var(--accent); }
+        .file-drop.dragover { border-color: var(--accent); background: #fff5f5; }
+
+        .file-drop .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .file-drop p { color: var(--text-secondary); }
+        .file-drop input { display: none; }
+
+        #preview {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        #preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover { background: #a82525; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .metadata-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .metadata-box.visible { display: block; }
+        .metadata-box h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metadata-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="/" class="logo">Foto<span>Blog</span></a>
+        </div>
+    </header>
+
+    <main>
+        <h1>Subir Foto</h1>
+        <p class="subtitle">Comparte tus fotos en el blog</p>
+
+        <form class="upload-form" id="uploadForm">
+            <div class="form-group">
+                <label>Foto</label>
+                <div class="file-drop" id="dropZone">
+                    <div class="icon">📷</div>
+                    <p>Arrastra una foto aquí o click para seleccionar</p>
+                    <input type="file" id="fileInput" accept="image/*" required>
+                </div>
+                <div id="preview"><img id="previewImg" src="" alt="Preview"></div>
+            </div>
+
+            <div class="metadata-box" id="metadataBox">
+                <h4>📱 Metadatos de la Foto</h4>
+                <div id="metadataContent"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Título</label>
+                <input type="text" id="title" placeholder="Se auto-completa con el nombre del archivo">
+            </div>
+
+            <div class="form-group">
+                <label for="category">Categoría</label>
+                <input type="text" id="category" placeholder="Ej: Paisajes, Urbano, Retratos">
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Comentario</label>
+                <textarea id="comment" placeholder="Cuéntame algo sobre esta foto..."></textarea>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">Subir Foto</button>
+            <div id="uploadResult"></div>
+        </form>
+    </main>
+
+    <script>
+        const CLOUD_NAME = 'dk3t3fas3';
+        const DROPZONE = document.getElementById('dropZone');
+        const FILE_INPUT = document.getElementById('fileInput');
+        const PREVIEW = document.getElementById('preview');
+        const PREVIEW_IMG = document.getElementById('previewImg');
+        const FORM = document.getElementById('uploadForm');
+        const SUBMIT_BTN = document.getElementById('submitBtn');
+        const RESULT = document.getElementById('uploadResult');
+        const METADATA_BOX = document.getElementById('metadataBox');
+        const METADATA_CONTENT = document.getElementById('metadataContent');
+
+        let currentMetadata = {};
+
+        DROPZONE.onclick = () => FILE_INPUT.click();
+
+        DROPZONE.ondragover = (e) => { e.preventDefault(); DROPZONE.classList.add('dragover'); };
+        DROPZONE.ondragleave = () => DROPZONE.classList.remove('dragover');
+        DROPZONE.ondrop = (e) => {
+            e.preventDefault();
+            DROPZONE.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                FILE_INPUT.files = e.dataTransfer.files;
+                handleFile(e.dataTransfer.files[0]);
+            }
+        };
+
+        FILE_INPUT.onchange = () => {
+            if (FILE_INPUT.files.length) handleFile(FILE_INPUT.files[0]);
+        };
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona una imagen');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                PREVIEW_IMG.src = e.target.result;
+                PREVIEW.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+
+            // Wait for EXIF library to be ready
+            if (typeof EXIF !== 'undefined') {
+                extractMetadata(file);
+            } else {
+                console.log('EXIF library not loaded yet, waiting...');
+                setTimeout(() => extractMetadata(file), 500);
+            }
+        }
+
+        function extractMetadata(file) {
+            try {
+                EXIF.getData(file, function() {
+                    try {
+                        currentMetadata = {
+                            make: EXIF.getTag(this, 'Make'),
+                            model: EXIF.getTag(this, 'Model'),
+                            dateTime: EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime'),
+                            width: EXIF.getTag(this, 'PixelXDimension') || EXIF.getTag(this, 'ImageWidth'),
+                            height: EXIF.getTag(this, 'PixelYDimension') || EXIF.getTag(this, 'ImageLength'),
+                            iso: EXIF.getTag(this, 'ISOSpeedRatings'),
+                            aperture: EXIF.getTag(this, 'FNumber'),
+                            exposure: EXIF.getTag(this, 'ExposureTime'),
+                            focalLength: EXIF.getTag(this, 'FocalLength'),
+                            lens: EXIF.getTag(this, 'LensModel')
+                        };
+                        
+                        displayMetadata();
+                        autoFillTitle(file.name);
+                    } catch(e) {
+                        console.log('Error reading EXIF tags: ' + e);
+                    }
+                });
+            } catch(e) {
+                console.log('EXIF library error: ' + e);
+            }
+        }
+
+        function displayMetadata() {
+            let html = '';
+
+            if (currentMetadata.make || currentMetadata.model) {
+                const camera = [currentMetadata.make, currentMetadata.model].filter(Boolean).join(' ');
+                html += `<div class="metadata-item"><span>📱 Cámara</span><span>${camera}</span></div>`;
+            }
+
+            if (currentMetadata.dateTime) {
+                html += `<div class="metadata-item"><span>📅 Fecha</span><span>${currentMetadata.dateTime}</span></div>`;
+            }
+
+            if (currentMetadata.width && currentMetadata.height) {
+                html += `<div class="metadata-item"><span>📐 Tamaño</span><span>${currentMetadata.width} × ${currentMetadata.height}</span></div>`;
+            }
+
+            if (currentMetadata.iso) html += `<div class="metadata-item"><span>📊 ISO</span><span>${currentMetadata.iso}</span></div>`;
+            if (currentMetadata.aperture) html += `<div class="metadata-item"><span>🔆 Apertura</span><span>f/${currentMetadata.aperture}</span></div>`;
+            if (currentMetadata.exposure) html += `<div class="metadata-item"><span>⏱️ Exposición</span><span>${currentMetadata.exposure}s</span></div>`;
+            if (currentMetadata.focalLength) html += `<div class="metadata-item"><span>🎯 Focal</span><span>${currentMetadata.focalLength}mm</span></div>`;
+
+            if (html) {
+                METADATA_CONTENT.innerHTML = html;
+                METADATA_BOX.classList.add('visible');
+            }
+        }
+
+        function autoFillTitle(filename) {
+            const name = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            document.getElementById('title').value = name;
+        }
+
+        FORM.onsubmit = async (e) => {
+            e.preventDefault();
+
+            if (!FILE_INPUT.files.length) {
+                alert('Por favor selecciona una foto');
+                return;
+            }
+
+            const file = FILE_INPUT.files[0];
+
+            SUBMIT_BTN.disabled = true;
+            SUBMIT_BTN.textContent = 'Subiendo...';
+            RESULT.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'fotoblog_unsigned');
+            formData.append('folder', 'fotoblog');
+
+            try {
+                // Build context string from metadata AND form fields
+                let contextStr = '';
+                if (currentMetadata.make) contextStr += `camera=${currentMetadata.make} ${currentMetadata.model || ''}|`;
+                if (currentMetadata.dateTime) contextStr += `date=${currentMetadata.dateTime}|`;
+                if (currentMetadata.width) contextStr += `size=${currentMetadata.width}x${currentMetadata.height}`;
+                
+                // Add form fields
+                const title = document.getElementById('title').value;
+                const category = document.getElementById('category').value;
+                const comment = document.getElementById('comment').value;
+                
+                if (title) contextStr += `|title=${title}`;
+                if (category) contextStr += `|category=${category}`;
+                if (comment) contextStr += `|comment=${comment}`;
+                
+                if (contextStr) {
+                    formData.append('context', contextStr);
+                }
+
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error.message);
+
+                RESULT.style.display = 'block';
+                RESULT.style.background = '#d4edda';
+                RESULT.style.color = '#155724';
+                RESULT.style.padding = '1rem';
+                RESULT.style.borderRadius = '6px';
+                RESULT.innerHTML = `
+                    ✅ ¡Foto subida a Cloudinary!<br><br>
+                    <strong>Copia esta URL y envíamela por Telegram:</strong><br>
+                    <code style="word-break:break-all;">${data.secure_url}</code>
+                `;
+
+                FORM.reset();
+                PREVIEW.style.display = 'none';
+                METADATA_BOX.classList.remove('visible');
+
+            } catch (err) {
+                RESULT.style.display = 'block';
+                RESULT.style.background = '#f8d7da';
+                RESULT.style.color = '#721c24';
+                RESULT.style.padding = '1rem';
+                RESULT.style.borderRadius = '6px';
+                RESULT.textContent = 'Error: ' + err.message;
+            }
+
+            SUBMIT_BTN.disabled = false;
+            SUBMIT_BTN.textContent = 'Subir Foto';
+        };
+    </script>
+</body>
+</html>
