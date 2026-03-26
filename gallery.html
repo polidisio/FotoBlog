@@ -366,25 +366,13 @@
                 return;
             }
 
-            let html = ''; var showHero = false;
+            let html = '';
             
-            // Hero (first photo)
-            const hero = photos[0];
-            html += '<section class="hero">';
-            html += '<div class="hero-label">Featured</div>';
-            html += '<img src="' + hero.filename + '" alt="' + hero.title + '" onclick="openModal(0)">';
-            html += '<h2>' + hero.title + '</h2>';
-            html += '<div class="hero-meta">' + (hero.category || '') + ' · ' + formatDate(hero.date_added) + '</div>';
-            if (hero.comment) html += '<p class="hero-excerpt">' + hero.comment + '</p>';
-            html += '</section>';
-
-            // Gallery header
-            html += '<div id="galeria"><div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
-
-            // Masonry grid
+            // Masonry grid with all photos
+            html += '<div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
             html += '<div class="masonry-grid">';
             
-            for (var i = 1; i < photos.length; i++) {
+            for (var i = 0; i < photos.length; i++) {
                 var photo = photos[i];
                 html += '<div class="photo-card" onclick="openModal(' + i + ')" style="animation-delay: ' + (i * 0.1) + 's">';
                 html += '<img src="' + photo.filename + '" alt="' + photo.title + '">';
@@ -392,10 +380,11 @@
                 html += '<div class="category">' + (photo.category || 'Sin categoría') + '</div>';
                 html += '<h3>' + photo.title + '</h3>';
                 html += '<div class="date">' + formatDate(photo.date_added) + '</div>';
+                if (photo.comment) html += '<p class="photo-comment">' + photo.comment.replace(/\n/g, '<br>') + '</p>';
                 html += '</div></div>';
             }
             
-            html += '</div></div>';
+            html += '</div>';
             
             main.innerHTML = html;
         }
