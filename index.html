@@ -396,6 +396,7 @@
             html += '<div class="masonry-grid">';
             
             for (var i = 1; i < photos.length; i++) {
+                var photo = photos[i];
                 html += '<div class="photo-card" onclick="openModal(' + i + ')" style="animation-delay: ' + (i * 0.1) + 's">';
                 html += '<img src="' + photo.filename + '" alt="' + photo.title + '">';
                 html += '<div class="photo-overlay">';
