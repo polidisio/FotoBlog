@@ -337,7 +337,7 @@
         <div class="header-inner">
             <a href="/index.html" class="logo">Foto<span>Blog</span></a>
             <nav>
-                <a href="/gallery.html" class="nav-link">📷 Galería</a>
+                <a href="/" class="nav-link">📷 Galería</a>
             </nav>
         </div>
     </header>
@@ -381,7 +381,7 @@
 
             let html = '';
             
-            // Hero (first photo) with button to gallery
+            // Hero (first photo)
             const hero = photos[0];
             html += '<section class="hero">';
             html += '<div class="hero-label">Featured</div>';
@@ -390,6 +390,24 @@
             html += '<div class="hero-meta">' + (hero.category || '') + ' · ' + formatDate(hero.date_added) + '</div>';
             if (hero.comment) html += '<p class="hero-excerpt">' + hero.comment + '</p>';
             html += '</section>';
+
+            // Gallery grid with ALL photos
+            html += '<div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
+            html += '<div class="masonry-grid">';
+            
+            for (var i = 0; i < photos.length; i++) {
+                var photo = photos[i];
+                html += '<div class="photo-card" onclick="openModal(' + i + ')" style="animation-delay: ' + (i * 0.1) + 's">';
+                html += '<img src="' + photo.filename + '" alt="' + photo.title + '">';
+                html += '<div class="photo-overlay">';
+                html += '<div class="category">' + (photo.category || 'Sin categoría') + '</div>';
+                html += '<h3>' + photo.title + '</h3>';
+                html += '<div class="date">' + formatDate(photo.date_added) + '</div>';
+                if (photo.comment) html += '<p class="photo-comment">' + photo.comment.replace(/\n/g, '<br>') + '</p>';
+                html += '</div></div>';
+            }
+            
+            html += '</div>';
             
             main.innerHTML = html;
         }
