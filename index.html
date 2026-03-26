@@ -389,7 +389,6 @@
             html += '<h2>' + hero.title + '</h2>';
             html += '<div class="hero-meta">' + (hero.category || '') + ' · ' + formatDate(hero.date_added) + '</div>';
             if (hero.comment) html += '<p class="hero-excerpt">' + hero.comment + '</p>';
-            html += '<a href="/gallery.html" class="btn" style="margin-top:2rem;display:inline-block;">📷 Ver Galería Completa</a>';
             html += '</section>';
             
             main.innerHTML = html;
