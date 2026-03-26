@@ -337,7 +337,7 @@
         <div class="header-inner">
             <a href="/" class="logo">Foto<span>Blog</span></a>
             <nav>
-                <a href="/#galeria" class="nav-link">📷 Galería</a>
+                <a href="/gallery.html" class="nav-link">📷 Galería</a>
             </nav>
         </div>
     </header>
@@ -381,7 +381,7 @@
 
             let html = '';
             
-            // Hero (first photo)
+            // Hero (first photo) with button to gallery
             const hero = photos[0];
             html += '<section class="hero">';
             html += '<div class="hero-label">Featured</div>';
@@ -389,26 +389,8 @@
             html += '<h2>' + hero.title + '</h2>';
             html += '<div class="hero-meta">' + (hero.category || '') + ' · ' + formatDate(hero.date_added) + '</div>';
             if (hero.comment) html += '<p class="hero-excerpt">' + hero.comment + '</p>';
+            html += '<a href="/gallery.html" class="btn" style="margin-top:2rem;display:inline-block;">📷 Ver Galería Completa</a>';
             html += '</section>';
-
-            // Gallery header
-            html += '<div id="galeria"><div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
-
-            // Masonry grid
-            html += '<div class="masonry-grid">';
-            
-            for (var i = 1; i < photos.length; i++) {
-                var photo = photos[i];
-                html += '<div class="photo-card" onclick="openModal(' + i + ')" style="animation-delay: ' + (i * 0.1) + 's">';
-                html += '<img src="' + photo.filename + '" alt="' + photo.title + '">';
-                html += '<div class="photo-overlay">';
-                html += '<div class="category">' + (photo.category || 'Sin categoría') + '</div>';
-                html += '<h3>' + photo.title + '</h3>';
-                html += '<div class="date">' + formatDate(photo.date_added) + '</div>';
-                html += '</div></div>';
-            }
-            
-            html += '</div></div>';
             
             main.innerHTML = html;
         }
