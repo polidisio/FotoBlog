@@ -337,7 +337,7 @@
         <div class="header-inner">
             <a href="/index.html" class="logo">Foto<span>Blog</span></a>
             <nav>
-                <a href="/" class="nav-link">📷 Galería</a>
+                <a href="/gallery.html" class="nav-link">📷 Galería</a>
             </nav>
         </div>
     </header>
@@ -395,8 +395,7 @@
             html += '<div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
             html += '<div class="masonry-grid">';
             
-            for (var i = 0; i < photos.length; i++) {
-                var photo = photos[i];
+            for (var i = 1; i < photos.length; i++) {
                 html += '<div class="photo-card" onclick="openModal(' + i + ')" style="animation-delay: ' + (i * 0.1) + 's">';
                 html += '<img src="' + photo.filename + '" alt="' + photo.title + '">';
                 html += '<div class="photo-overlay">';
