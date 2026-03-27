@@ -335,9 +335,9 @@
 <body>
     <header>
         <div class="header-inner">
-            <a href="/" class="logo">Foto<span>Blog</span></a>
+            <a href="/index.html" class="logo">Foto<span>Blog</span></a>
             <nav>
-                <a href="/#galeria" class="nav-link">📷 Galería</a>
+                <a href="/gallery.html" class="nav-link">📷 Galería</a>
             </nav>
         </div>
     </header>
@@ -391,10 +391,8 @@
             if (hero.comment) html += '<p class="hero-excerpt">' + hero.comment + '</p>';
             html += '</section>';
 
-            // Gallery header
-            html += '<div id="galeria"><div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
-
-            // Masonry grid
+            // Gallery grid with ALL photos
+            html += '<div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
             html += '<div class="masonry-grid">';
             
             for (var i = 1; i < photos.length; i++) {
@@ -405,10 +403,11 @@
                 html += '<div class="category">' + (photo.category || 'Sin categoría') + '</div>';
                 html += '<h3>' + photo.title + '</h3>';
                 html += '<div class="date">' + formatDate(photo.date_added) + '</div>';
+                if (photo.comment) html += '<p class="photo-comment">' + photo.comment.replace(/\n/g, '<br>') + '</p>';
                 html += '</div></div>';
             }
             
-            html += '</div></div>';
+            html += '</div>';
             
             main.innerHTML = html;
         }
