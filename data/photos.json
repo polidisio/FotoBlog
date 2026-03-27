@@ -6,7 +6,8 @@
       "title": "Montaña Mágica",
       "comment": "Perdiéndose en Asturias",
       "category": "Paisajes",
-      "date_added": "2026-03-25"
+      "date_added": "2026-03-25",
+      "exif": null
     },
     {
       "id": "2",
@@ -14,7 +15,8 @@
       "title": "Un pequeño trozo de Egipto en Madrid",
       "comment": "📱 iPhone\n📐 4032 × 3024 px\n📅 25 de Marzo, 2026\n🏙️ Madrid, España",
       "category": "Urbana",
-      "date_added": "2026-03-25"
+      "date_added": "2026-03-25",
+      "exif": null
     },
     {
       "id": "3",
@@ -22,7 +24,8 @@
       "title": "Atardecer en Madrid",
       "comment": "📱 iPhone\n📐 5712 × 4284 px\n📅 25 de Marzo, 2026\n🌅 Madrid, España",
       "category": "Urbano",
-      "date_added": "2026-03-25"
+      "date_added": "2026-03-25",
+      "exif": null
     },
     {
       "id": "4",
@@ -30,7 +33,8 @@
       "title": "Palmera al contraluz",
       "comment": "📱 Apple iPhone 15\n📐 3785 × 2838 px\n📅 26 de Septiembre, 2024\n🏝️ Lanzarote horas mágicas",
       "category": "Paisajes",
-      "date_added": "2024-09-26"
+      "date_added": "2024-09-26",
+      "exif": null
     }
   ]
 }
