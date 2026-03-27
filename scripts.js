@@ -14,32 +14,49 @@ async function loadPhotos() {
 
 function renderPhotos() {
     const main = document.getElementById('content');
+    const photoList = document.getElementById('photo-list');
 
     if (!photos.length) {
         main.innerHTML = '<div class="empty-state"><div class="icon">📷</div><h2>No hay fotos todavía</h2></div>';
         return;
     }
 
-    let html = '';
-
-    // Hero (first photo) - only on index page
-    if (document.getElementById('hero-section')) {
-        const hero = photos[0];
-        html += '<section class="hero" id="hero-section">';
-        html += '<div class="hero-label">Featured</div>';
-        html += '<img src="' + hero.filename + '" alt="' + hero.title + '" onclick="openModal(0)">';
-        html += '<h2>' + hero.title + '</h2>';
-        html += '<div class="hero-meta">' + (hero.category || '') + ' · ' + formatDate(hero.date_added) + '</div>';
-        if (hero.comment) html += '<p class="hero-excerpt">' + hero.comment + '</p>';
-        html += '</section>';
+    // Home page: vertical list layout
+    if (photoList) {
+        let html = '<div class="photo-list">';
+        for (var i = 0; i < photos.length; i++) {
+            var photo = photos[i];
+            html += '<div class="photo-item" style="animation-delay: ' + (i * 0.1) + 's">';
+            html += '<img src="' + photo.filename + '" alt="' + photo.title + '" onclick="openModal(' + i + ')">';
+            html += '<div class="photo-data">';
+            html += '<div class="category">' + (photo.category || 'Sin categoría') + '</div>';
+            html += '<h3>' + photo.title + '</h3>';
+            html += '<div class="date">' + formatDate(photo.date_added) + '</div>';
+            if (photo.comment) html += '<p class="comment">' + photo.comment + '</p>';
+            // EXIF preview
+            if (photo.exif) {
+                var exif = photo.exif;
+                var exifHtml = '';
+                if (exif.camera) exifHtml += '<span>📱 ' + exif.camera + '</span>';
+                if (exif.size) exifHtml += '<span>📐 ' + exif.size + '</span>';
+                if (exif.iso) exifHtml += '<span>📊 ISO ' + exif.iso + '</span>';
+                if (exif.aperture) exifHtml += '<span>🔆 f/' + exif.aperture + '</span>';
+                if (exif.exposure) exifHtml += '<span>⏱️ ' + exif.exposure + 's</span>';
+                if (exif.focalLength) exifHtml += '<span>🎯 ' + exif.focalLength + 'mm</span>';
+                if (exifHtml) html += '<div class="exif-preview">' + exifHtml + '</div>';
+            }
+            html += '</div></div>';
+        }
+        html += '</div>';
+        main.innerHTML = html;
+        return;
     }
 
-    // Gallery grid
-    const startIndex = document.getElementById('hero-section') ? 1 : 0;
-    html += '<div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
+    // Gallery page: masonry grid
+    let html = '<div class="gallery-header"><h2>Galería</h2><div class="line"></div></div>';
     html += '<div class="masonry-grid">';
 
-    for (var i = startIndex; i < photos.length; i++) {
+    for (var i = 0; i < photos.length; i++) {
         var photo = photos[i];
         html += '<div class="photo-card" onclick="openModal(' + i + ')" style="animation-delay: ' + (i * 0.1) + 's">';
         html += '<img src="' + photo.filename + '" alt="' + photo.title + '">';
