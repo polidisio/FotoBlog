@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rollo — FotoBlog de Jose</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="/" class="logo">Foto<span>Blog</span></a>
+            <p class="tagline">Cada foto cuenta una historia del pasado</p>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">🏠 Inicio</a>
+                <a href="/roll.html" class="nav-link">🎞️ Rollos</a>
+                <a href="/upload.html" class="nav-link">📤 Subir</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div id="roll-info" class="section-header" style="text-align:left;margin-bottom:1rem;">
+            <!-- Filled by JS -->
+        </div>
+
+        <div id="roll-photos">
+            <div class="empty-state">
+                <div class="icon">📷</div>
+                <h2>Cargando...</h2>
+            </div>
+        </div>
+    </main>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <button class="lightbox-nav lightbox-prev" onclick="prevPhoto()">‹</button>
+        <button class="lightbox-nav lightbox-next" onclick="nextPhoto()">›</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="">
+        </div>
+        <div class="lightbox-info">
+            <h3 class="lightbox-title" id="lightbox-title"></h3>
+            <div class="lightbox-meta" id="lightbox-meta"></div>
+        </div>
+        <div class="lightbox-counter" id="lightbox-counter"></div>
+    </div>
+
+    <footer>
+        <div class="footer-seal">
+            <span>FotoBlog<br>Jose · 2026</span>
+        </div>
+        <p class="footer-copyright">Cada foto cuenta una historia del pasado</p>
+    </footer>
+
+    <script src="./app.js"></script>
+</body>
+</html>

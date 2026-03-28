@@ -4,55 +4,83 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-FotoBlog de Jose — a Spanish-language personal photography blog with an editorial magazine-style design (similar to Colossal). Static site deployed on Vercel.
+FotoBlog de Jose — a Spanish-language personal photography blog with vintage/analog film aesthetic. Photos are organized by rolls (carretes), inspired by film photography, Polaroid frames, and 70s magazine style.
 
 ## Tech Stack
 
 - **Vanilla HTML/CSS/JS** — no frameworks, no build process, no npm
-- **Cloudinary** — external image storage (URLs in `photos.json`)
-- **Vercel** — static hosting with automatic deploys on push to main
+- **Cloudinary** — external image storage (URLs in `data/rolls.json`)
+- **GitHub Pages** — static hosting at https://polidisio.github.io/FotoBlog/
 
 ## File Structure
 
 ```
 FotoBlog/
-├── index.html       # Homepage: hero photo + masonry gallery grid
-├── gallery.html     # All photos in masonry grid (no hero)
-├── upload.html      # Upload form (Cloudinary integration, placeholder workflow)
+├── index.html       # Home: hero Polaroid + rolls grid
+├── roll.html        # Single roll view: contact sheet style photos
+├── upload.html      # Upload form (generates JSON snippet)
+├── styles.css       # All styles (vintage aesthetic)
+├── app.js           # All JS (loadRolls, render, lightbox, filter)
 ├── data/
-│   └── photos.json  # Photo metadata (id, filename/URL, title, comment, category, date_added)
-└── photos/          # Local photo storage (git-tracked, used for deployment)
+│   └── rolls.json   # Photos organized by rolls
+└── photos/          # Local photos (git-tracked, rarely used)
 ```
 
 ## Development
 
 ```bash
-# Local server
-python -m http.server 8000
-
-# Then open http://localhost:8000 in browser
+python3 -m http.server 8000
+# Open http://localhost:8000
 ```
 
-No build commands, no tests, no linting. Just open the HTML files directly or serve statically.
+No build commands, no tests, no linting.
 
-## Photo Workflow
+## Data Model (rolls.json)
 
-Photos are uploaded to Cloudinary via `upload.html`. The Cloudinary URL is then sent via Telegram to the owner, who manually adds it to `data/photos.json`.
+```json
+{
+  "rolls": [
+    {
+      "id": "001",
+      "name": "Madrid Days",
+      "description": "Días de sol por Madrid",
+      "location": "Madrid, España",
+      "camera": "Canon AE-1",
+      "date": "2026-03-25",
+      "photos": [
+        {
+          "id": "001-01",
+          "filename": "https://...",
+          "title": "Montaña Mágica",
+          "notes": "Primera exposición",
+          "day_number": "001",
+          "photo_number": "01"
+        }
+      ]
+    }
+  ]
+}
+```
 
-To add a photo manually:
-1. Add the photo to `photos/` folder
-2. Edit `data/photos.json` to add the metadata entry
-3. Commit and push → auto-deploy on Vercel
+## Adding Photos
 
-## Architecture Notes
+1. Go to `/upload.html`
+2. Select photo, fill in details (title, roll ID, day #, photo #, notes)
+3. Upload to Cloudinary
+4. Copy the JSON snippet generated
+5. Manually add the snippet to the appropriate roll in `data/rolls.json`
+6. Commit and push
 
-- **CSS is duplicated** across `index.html`, `gallery.html`, and `upload.html` — future refactoring should extract to `styles.css`
-- **JS is inline** in each HTML file — modal, photo loading, and rendering logic are duplicated
-- Photos reference Cloudinary URLs in production, but `photos/` folder exists for local/git storage
-- The `index.html` uses photo[0] as hero, then renders remaining photos in masonry grid
-- The `gallery.html` renders all photos in masonry grid without a hero
+## Design Elements
+
+- **Colors**: Cream (#F5F0E6), Sepia (#704214), Military Green (#556B2F), Dark Brown (#3E2723)
+- **Typography**: Playfair Display (headers, italic), Lora (body, italic)
+- **Polaroid frames**: White border, exaggerated shadow, optional tape decoration
+- **Contact sheet style**: Photos numbered in corner, sepia overlay on hover
+- **Lightbox**: Projector/diapositive style with wipe transition
+- **Paper texture**: Subtle grain overlay on entire page
+- **Vignette**: Radial gradient on photos
 
 ## Deployment
 
-- **URL:** https://fotoblog-opal.vercel.app
-- Push to `main` branch triggers automatic Vercel deployment
+Push to `main` branch → GitHub Pages auto-deploys in ~2 minutes.

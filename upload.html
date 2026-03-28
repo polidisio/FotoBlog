@@ -3,451 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Foto - FotoBlog de Jose</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Subir Foto — FotoBlog de Jose</title>
+    <link rel="stylesheet" href="./styles.css">
     <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
-    <style>
-        :root {
-            --bg-primary: #faf9f7;
-            --bg-secondary: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #6b6b6b;
-            --accent: #c9302c;
-            --accent-hover: #a82525;
-            --border: #e5e4e2;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        header {
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border);
-            padding: 1.25rem 0;
-        }
-
-        .header-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-
-        .logo span { color: var(--accent); }
-
-        .nav-links {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: inline-block;
-        }
-
-        .nav-link:hover {
-            color: var(--accent);
-            background: rgba(201, 48, 44, 0.1);
-        }
-
-        main { max-width: 600px; margin: 0 auto; padding: 3rem 2rem; }
-
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .upload-form {
-            background: var(--bg-secondary);
-            padding: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .form-group { margin-bottom: 1.5rem; }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-
-        .form-group textarea { resize: vertical; min-height: 100px; }
-
-        .file-drop {
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            padding: 3rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: var(--bg-primary);
-        }
-
-        .file-drop:hover { border-color: var(--accent); }
-        .file-drop.dragover { border-color: var(--accent); background: #fff5f5; }
-
-        .file-drop .icon { font-size: 3rem; margin-bottom: 1rem; }
-        .file-drop p { color: var(--text-secondary); }
-        .file-drop input { display: none; }
-
-        #preview {
-            margin-top: 1.5rem;
-            display: none;
-        }
-
-        #preview img {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 0.875rem 2rem;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
-
-        .btn:hover { background: var(--accent-hover); }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-
-        .result {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .metadata-box {
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            display: none;
-        }
-
-        .metadata-box.visible { display: block; }
-        .metadata-box h4 {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .metadata-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.25rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .metadata-item:last-child { border-bottom: none; }
-
-        .json-snippet {
-            background: #f5f5f5;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-family: monospace;
-            font-size: 0.8rem;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .copy-btn {
-            margin-top: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--text-primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .copy-btn:hover { background: #333; }
-        .copy-btn.copied { background: #28a745; }
-    </style>
 </head>
 <body>
     <header>
         <div class="header-inner">
             <a href="/" class="logo">Foto<span>Blog</span></a>
+            <p class="tagline">Cada foto cuenta una historia del pasado</p>
             <nav class="nav-links">
-                <a href="/gallery.html" class="nav-link">📷 Galería</a>
+                <a href="/" class="nav-link">🏠 Inicio</a>
+                <a href="/roll.html" class="nav-link">🎞️ Rollos</a>
                 <a href="/upload.html" class="nav-link">📤 Subir</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <h1>Subir Foto</h1>
-        <p class="subtitle">Comparte tus fotos en el blog</p>
+        <div class="upload-container">
+            <h1 class="upload-title">Nueva Exposición</h1>
+            <p class="upload-subtitle">Añade una foto a tu colección analógica</p>
 
-        <form class="upload-form" id="uploadForm">
-            <div class="form-group">
-                <label>Foto</label>
-                <div class="file-drop" id="dropZone">
-                    <div class="icon">📷</div>
-                    <p>Arrastra una foto aquí o click para seleccionar</p>
-                    <input type="file" id="fileInput" accept="image/*" required>
+            <form class="upload-form" id="uploadForm">
+                <div class="form-group">
+                    <label>Negativo / Foto</label>
+                    <div class="file-drop" id="dropZone">
+                        <div class="icon">📷</div>
+                        <p>Arrastra una foto aquí o haz click para seleccionar</p>
+                        <input type="file" id="fileInput" accept="image/*" required>
+                    </div>
                 </div>
-                <div id="preview"><img id="previewImg" src="" alt="Preview"></div>
-            </div>
 
-            <div class="metadata-box" id="metadataBox">
-                <h4>📱 Metadatos de la Foto</h4>
-                <div id="metadataContent"></div>
-            </div>
+                <div class="form-group">
+                    <label for="title">Título</label>
+                    <input type="text" id="title" placeholder="Nombre de la exposición">
+                </div>
 
-            <div class="form-group">
-                <label for="title">Título</label>
-                <input type="text" id="title" placeholder="Se auto-completa con el nombre del archivo">
-            </div>
+                <div class="form-group">
+                    <label for="roll-id">ID del Roll</label>
+                    <input type="text" id="roll-id" placeholder="001">
+                </div>
 
-            <div class="form-group">
-                <label for="category">Categoría</label>
-                <input type="text" id="category" placeholder="Ej: Paisajes, Urbano, Retratos">
-            </div>
+                <div class="form-group">
+                    <label for="day-number">Day #</label>
+                    <input type="text" id="day-number" placeholder="001">
+                </div>
 
-            <div class="form-group">
-                <label for="comment">Comentario</label>
-                <textarea id="comment" placeholder="Cuéntame algo sobre esta foto..."></textarea>
-            </div>
+                <div class="form-group">
+                    <label for="photo-number">Foto #</label>
+                    <input type="text" id="photo-number" placeholder="01">
+                </div>
 
-            <button type="submit" class="btn" id="submitBtn">Subir Foto</button>
-            <div id="uploadResult"></div>
-        </form>
+                <div class="form-group">
+                    <label for="notes">Notas</label>
+                    <textarea id="notes" placeholder="Notas sobre esta exposición..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">Revelar y Subir</button>
+                <div id="uploadResult"></div>
+            </form>
+        </div>
     </main>
+
+    <footer>
+        <div class="footer-seal">
+            <span>FotoBlog<br>Jose · 2026</span>
+        </div>
+        <p class="footer-copyright">Cada foto cuenta una historia del pasado</p>
+    </footer>
 
     <script>
         const CLOUD_NAME = 'dk3t3fas3';
         const DROPZONE = document.getElementById('dropZone');
         const FILE_INPUT = document.getElementById('fileInput');
-        const PREVIEW = document.getElementById('preview');
-        const PREVIEW_IMG = document.getElementById('previewImg');
         const FORM = document.getElementById('uploadForm');
         const SUBMIT_BTN = document.getElementById('submitBtn');
         const RESULT = document.getElementById('uploadResult');
-        const METADATA_BOX = document.getElementById('metadataBox');
-        const METADATA_CONTENT = document.getElementById('metadataContent');
 
         let currentMetadata = {};
-        let currentFilename = '';
 
         DROPZONE.onclick = () => FILE_INPUT.click();
 
-        DROPZONE.ondragover = (e) => { e.preventDefault(); DROPZONE.classList.add('dragover'); };
-        DROPZONE.ondragleave = () => DROPZONE.classList.remove('dragover');
+        DROPZONE.ondragover = (e) => { e.preventDefault(); DROPZONE.style.borderColor = 'var(--sepia)'; };
+        DROPZONE.ondragleave = () => { DROPZONE.style.borderColor = ''; };
         DROPZONE.ondrop = (e) => {
             e.preventDefault();
-            DROPZONE.classList.remove('dragover');
+            DROPZONE.style.borderColor = '';
             if (e.dataTransfer.files.length) {
                 FILE_INPUT.files = e.dataTransfer.files;
-                handleFile(e.dataTransfer.files[0]);
+                autoFillFromFile(e.dataTransfer.files[0]);
             }
         };
 
         FILE_INPUT.onchange = () => {
-            if (FILE_INPUT.files.length) handleFile(FILE_INPUT.files[0]);
+            if (FILE_INPUT.files.length) autoFillFromFile(FILE_INPUT.files[0]);
         };
 
-        function handleFile(file) {
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor selecciona una imagen');
-                return;
-            }
+        function autoFillFromFile(file) {
+            if (!file.type.startsWith('image/')) return;
+            const name = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            document.getElementById('title').value = name;
 
-            currentFilename = file.name;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                PREVIEW_IMG.src = e.target.result;
-                PREVIEW.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-
+            // Try EXIF
             if (typeof EXIF !== 'undefined') {
-                extractMetadata(file);
-            } else {
-                setTimeout(() => extractMetadata(file), 500);
-            }
-        }
-
-        function extractMetadata(file) {
-            try {
                 EXIF.getData(file, function() {
                     try {
-                        currentMetadata = {
-                            make: EXIF.getTag(this, 'Make'),
-                            model: EXIF.getTag(this, 'Model'),
-                            dateTime: EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime'),
-                            width: EXIF.getTag(this, 'PixelXDimension') || EXIF.getTag(this, 'ImageWidth'),
-                            height: EXIF.getTag(this, 'PixelYDimension') || EXIF.getTag(this, 'ImageLength'),
-                            iso: EXIF.getTag(this, 'ISOSpeedRatings'),
-                            aperture: EXIF.getTag(this, 'FNumber'),
-                            exposure: EXIF.getTag(this, 'ExposureTime'),
-                            focalLength: EXIF.getTag(this, 'FocalLength'),
-                            lens: EXIF.getTag(this, 'LensModel')
-                        };
-
-                        displayMetadata();
-                        autoFillTitle(file.name);
-                    } catch(e) {
-                        console.log('Error reading EXIF tags: ' + e);
-                    }
+                        const dateTime = EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime');
+                        if (dateTime) {
+                            // Parse EXIF date to day number (simplified)
+                            const dayMatch = String(dateTime).match(/(\d{4}):(\d{2}):(\d{2})/);
+                            if (dayMatch) {
+                                document.getElementById('day-number').value = `${dayMatch[2]}${dayMatch[3]}`;
+                            }
+                        }
+                    } catch(e) {}
                 });
-            } catch(e) {
-                console.log('EXIF library error: ' + e);
             }
-        }
-
-        function displayMetadata() {
-            let html = '';
-
-            if (currentMetadata.make || currentMetadata.model) {
-                const camera = [currentMetadata.make, currentMetadata.model].filter(Boolean).join(' ');
-                html += `<div class="metadata-item"><span>📱 Cámara</span><span>${camera}</span></div>`;
-            }
-
-            if (currentMetadata.dateTime) {
-                html += `<div class="metadata-item"><span>📅 Fecha</span><span>${currentMetadata.dateTime}</span></div>`;
-            }
-
-            if (currentMetadata.width && currentMetadata.height) {
-                html += `<div class="metadata-item"><span>📐 Tamaño</span><span>${currentMetadata.width} × ${currentMetadata.height}</span></div>`;
-            }
-
-            if (currentMetadata.iso) html += `<div class="metadata-item"><span>📊 ISO</span><span>${currentMetadata.iso}</span></div>`;
-            if (currentMetadata.aperture) html += `<div class="metadata-item"><span>🔆 Apertura</span><span>f/${currentMetadata.aperture}</span></div>`;
-            if (currentMetadata.exposure) html += `<div class="metadata-item"><span>⏱️ Exposición</span><span>${currentMetadata.exposure}s</span></div>`;
-            if (currentMetadata.focalLength) html += `<div class="metadata-item"><span>🎯 Focal</span><span>${currentMetadata.focalLength}mm</span></div>`;
-
-            if (html) {
-                METADATA_CONTENT.innerHTML = html;
-                METADATA_BOX.classList.add('visible');
-            }
-        }
-
-        function autoFillTitle(filename) {
-            const name = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-            document.getElementById('title').value = name;
-        }
-
-        function buildExifObject() {
-            const exif = {};
-
-            if (currentMetadata.make || currentMetadata.model) {
-                exif.camera = [currentMetadata.make, currentMetadata.model].filter(Boolean).join(' ');
-            }
-            if (currentMetadata.dateTime) {
-                exif.date = currentMetadata.dateTime;
-            }
-            if (currentMetadata.width && currentMetadata.height) {
-                exif.size = currentMetadata.width + ' × ' + currentMetadata.height;
-            }
-            if (currentMetadata.iso) exif.iso = currentMetadata.iso;
-            if (currentMetadata.aperture) exif.aperture = currentMetadata.aperture;
-            if (currentMetadata.exposure) exif.exposure = String(currentMetadata.exposure);
-            if (currentMetadata.focalLength) exif.focalLength = String(currentMetadata.focalLength);
-            if (currentMetadata.lens) exif.lens = currentMetadata.lens;
-
-            return Object.keys(exif).length > 0 ? exif : null;
-        }
-
-        function generateJsonSnippet(cloudinaryUrl) {
-            const title = document.getElementById('title').value || 'Sin título';
-            const category = document.getElementById('category').value || '';
-            const comment = document.getElementById('comment').value || '';
-            const exif = buildExifObject();
-
-            const nextId = parseInt(Date.now() / 1000 % 100000);
-            const dateAdded = new Date().toISOString().split('T')[0];
-
-            const entry = {
-                id: String(nextId),
-                filename: cloudinaryUrl,
-                title: title,
-                comment: comment,
-                category: category,
-                date_added: dateAdded,
-                exif: exif
-            };
-
-            return JSON.stringify(entry, null, 2);
         }
 
         FORM.onsubmit = async (e) => {
             e.preventDefault();
-
             if (!FILE_INPUT.files.length) {
-                alert('Por favor selecciona una foto');
+                alert('Selecciona una foto primero');
                 return;
             }
 
             const file = FILE_INPUT.files[0];
-
             SUBMIT_BTN.disabled = true;
-            SUBMIT_BTN.textContent = 'Subiendo...';
+            SUBMIT_BTN.textContent = 'Revelando...';
             RESULT.style.display = 'none';
 
             const formData = new FormData();
@@ -460,40 +144,50 @@
                     method: 'POST',
                     body: formData
                 });
-
                 const data = await res.json();
-
                 if (data.error) throw new Error(data.error.message);
 
-                const jsonSnippet = generateJsonSnippet(data.secure_url);
+                // Build entry JSON
+                const title = document.getElementById('title').value || 'Sin título';
+                const rollId = document.getElementById('roll-id').value || '001';
+                const dayNumber = document.getElementById('day-number').value || '001';
+                const photoNumber = document.getElementById('photo-number').value || '01';
+                const notes = document.getElementById('notes').value || '';
 
-                RESULT.style.display = 'block';
-                RESULT.style.background = '#d4edda';
-                RESULT.style.color = '#155724';
-                RESULT.style.padding = '1rem';
-                RESULT.style.borderRadius = '6px';
+                const entry = {
+                    id: `${rollId}-${photoNumber}`,
+                    filename: data.secure_url,
+                    title: title,
+                    notes: notes,
+                    day_number: dayNumber,
+                    photo_number: photoNumber
+                };
+
+                const jsonSnippet = JSON.stringify(entry, null, 2);
+
                 RESULT.innerHTML = `
-                    <strong>✅ ¡Foto subida a Cloudinary!</strong><br><br>
-                    <strong>📋 Entry para photos.json (copia y pega):</strong>
-                    <div class="json-snippet">${escapeHtml(jsonSnippet)}</div>
-                    <button type="button" class="copy-btn" onclick="copyToClipboard(this, ${JSON.stringify(jsonSnippet).replace(/"/g, '&quot;')})">Copiar al portapapeles</button>
+                    <div class="result success">
+                        <strong>✅ ¡Negativo subido a Cloudinary!</strong><br><br>
+                        <strong>📋 Copia este JSON y añádelo al rollo en data/rolls.json:</strong>
+                        <div class="json-snippet">${escapeHtml(jsonSnippet)}</div>
+                        <button type="button" class="copy-btn" onclick="copyToClipboard(this, ${JSON.stringify(jsonSnippet).replace(/"/g, '&quot;')})">Copiar al portapapeles</button>
+                    </div>
                 `;
+                RESULT.style.display = 'block';
 
                 FORM.reset();
-                PREVIEW.style.display = 'none';
-                METADATA_BOX.classList.remove('visible');
 
             } catch (err) {
+                RESULT.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Error:</strong> ${err.message}
+                    </div>
+                `;
                 RESULT.style.display = 'block';
-                RESULT.style.background = '#f8d7da';
-                RESULT.style.color = '#721c24';
-                RESULT.style.padding = '1rem';
-                RESULT.style.borderRadius = '6px';
-                RESULT.textContent = 'Error: ' + err.message;
             }
 
             SUBMIT_BTN.disabled = false;
-            SUBMIT_BTN.textContent = 'Subir Foto';
+            SUBMIT_BTN.textContent = 'Revelar y Subir';
         };
 
         function escapeHtml(str) {
@@ -508,9 +202,19 @@
                     btn.textContent = 'Copiar al portapapeles';
                     btn.classList.remove('copied');
                 }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                alert('Error al copiar. Selecciona el texto manualmente.');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '¡Copiado!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copiar al portapapeles';
+                    btn.classList.remove('copied');
+                }, 2000);
             });
         }
     </script>

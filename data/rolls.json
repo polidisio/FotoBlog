@@ -1,0 +1,56 @@
+{
+  "rolls": [
+    {
+      "id": "001",
+      "name": "Madrid Days",
+      "description": "Días de sol por Madrid",
+      "location": "Madrid, España",
+      "camera": "iPhone",
+      "date": "2026-03-25",
+      "photos": [
+        {
+          "id": "001-01",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774428596/fotoblog/adn7uv8e5ef2zkzn7fe7.jpg",
+          "title": "Montaña Mágica",
+          "notes": "Perdiéndose en Asturias",
+          "day_number": "001",
+          "photo_number": "01"
+        },
+        {
+          "id": "001-02",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774450452/fotoblog/dcuvabzx9nj3etituc9r.jpg",
+          "title": "Un pequeño trozo de Egipto en Madrid",
+          "notes": "Templo de Debod al atardecer",
+          "day_number": "002",
+          "photo_number": "02"
+        },
+        {
+          "id": "001-03",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774457344/fotoblog/ioyzsja0wokvrzzccguk.jpg",
+          "title": "Atardecer en Madrid",
+          "notes": "Golden hour en la capital",
+          "day_number": "003",
+          "photo_number": "03"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "name": "Lanzarote Magic",
+      "description": "Horas mágicas en Lanzarote",
+      "location": "Lanzarote, España",
+      "camera": "iPhone 15",
+      "date": "2024-09-26",
+      "photos": [
+        {
+          "id": "002-01",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774461721/fotoblog/p59kt6roeauo0yyxkqdr.jpg",
+          "title": "Palmera al contraluz",
+          "notes": "Horas mágicas en Lanzarote",
+          "day_number": "001",
+          "photo_number": "12"
+        }
+      ]
+    }
+  ]
+}

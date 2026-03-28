@@ -3,34 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FotoBlog de Jose</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>FotoBlog de Jose — Análogos & Vintage</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <header>
         <div class="header-inner">
             <a href="/" class="logo">Foto<span>Blog</span></a>
+            <p class="tagline">Cada foto cuenta una historia del pasado</p>
             <nav class="nav-links">
-                <a href="/gallery.html" class="nav-link">📷 Galería</a>
+                <a href="/" class="nav-link">🏠 Inicio</a>
+                <a href="/roll.html" class="nav-link">🎞️ Rollos</a>
                 <a href="/upload.html" class="nav-link">📤 Subir</a>
             </nav>
+            <div class="year-filter">
+                <label for="year-filter">Año:</label>
+                <select id="year-filter">
+                    <option value="all">Todos los años</option>
+                </select>
+            </div>
         </div>
     </header>
 
-    <main id="photo-list">
-        <div class="empty-state">
-            <div class="icon">📷</div>
-            <h2>Cargando...</h2>
+    <main>
+        <section class="hero" id="hero-section">
+            <div class="hero-polaroid">
+                <img src="https://res.cloudinary.com/dk3t3fas3/image/upload/v1774428596/fotoblog/adn7uv8e5ef2zkzn7fe7.jpg" alt="Montaña Mágica" id="hero-img">
+                <div class="hero-label">
+                    <div class="hero-day" id="hero-day">Day 001</div>
+                    <h2 class="hero-title" id="hero-title">Montaña Mágica</h2>
+                    <p class="hero-meta" id="hero-meta">Madrid · Portra 400</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-header">
+            <h2>Rollos</h2>
+            <p>Historias capturadas en carrete</p>
+        </section>
+
+        <div id="rolls-container">
+            <div class="empty-state">
+                <div class="icon">📷</div>
+                <h2>Cargando...</h2>
+            </div>
         </div>
     </main>
 
     <footer>
-        <p>© 2026 FotoBlog de Jose</p>
+        <div class="footer-seal">
+            <span>FotoBlog<br>Jose · 2026</span>
+        </div>
+        <p class="footer-copyright">Cada foto cuenta una historia del pasado</p>
     </footer>
 
-    <script src="./scripts.js"></script>
+    <script src="./app.js"></script>
+    <script>
+        // Update hero with first photo from first roll
+        document.addEventListener('DOMContentLoaded', async () => {
+            const rolls = await loadRolls();
+            if (rolls.length > 0 && rolls[0].photos && rolls[0].photos[0]) {
+                const firstPhoto = rolls[0].photos[0];
+                const heroImg = document.getElementById('hero-img');
+                const heroTitle = document.getElementById('hero-title');
+                const heroMeta = document.getElementById('hero-meta');
+                const heroDay = document.getElementById('hero-day');
+
+                if (heroImg) heroImg.src = firstPhoto.filename;
+                if (heroTitle) heroTitle.textContent = firstPhoto.title || rolls[0].name;
+                if (heroDay) heroDay.textContent = `Day ${firstPhoto.day_number || '001'}`;
+                if (heroMeta) heroMeta.textContent = `${rolls[0].location} · ${rolls[0].camera}`;
+            }
+        });
+    </script>
 </body>
 </html>
