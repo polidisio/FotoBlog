@@ -192,6 +192,12 @@ function updateLightboxContent() {
 
     let metaHtml = '';
     if (photo.notes) metaHtml += `<span>📝 ${photo.notes}</span>`;
+    if (photo.exif) {
+        const exif = photo.exif;
+        if (exif.camera) metaHtml += `<span>📷 ${exif.camera}</span>`;
+        if (exif.size) metaHtml += `<span>📐 ${exif.size}</span>`;
+        if (exif.date) metaHtml += `<span>📅 ${exif.date}</span>`;
+    }
     if (meta) meta.innerHTML = metaHtml;
 }
 
@@ -256,7 +262,7 @@ function formatDate(dateStr) {
 }
 
 function goToRoll(rollId) {
-    window.location.href = `/roll.html?id=${rollId}`;
+    window.location.href = `./roll.html?id=${rollId}`;
 }
 
 function getRollIdFromUrl() {

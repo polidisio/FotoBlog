@@ -14,7 +14,12 @@
           "title": "Montaña Mágica",
           "notes": "Perdiéndose en Asturias",
           "day_number": "001",
-          "photo_number": "01"
+          "photo_number": "01",
+          "exif": {
+            "camera": "iPhone",
+            "date": "2026-03-25",
+            "size": "4032 × 3024"
+          }
         },
         {
           "id": "001-02",
@@ -22,7 +27,12 @@
           "title": "Un pequeño trozo de Egipto en Madrid",
           "notes": "Templo de Debod al atardecer",
           "day_number": "002",
-          "photo_number": "02"
+          "photo_number": "02",
+          "exif": {
+            "camera": "iPhone",
+            "date": "2026-03-25",
+            "size": "4032 × 3024"
+          }
         },
         {
           "id": "001-03",
@@ -30,7 +40,12 @@
           "title": "Atardecer en Madrid",
           "notes": "Golden hour en la capital",
           "day_number": "003",
-          "photo_number": "03"
+          "photo_number": "03",
+          "exif": {
+            "camera": "iPhone",
+            "date": "2026-03-25",
+            "size": "5712 × 4284"
+          }
         }
       ]
     },
@@ -48,7 +63,12 @@
           "title": "Palmera al contraluz",
           "notes": "Horas mágicas en Lanzarote",
           "day_number": "001",
-          "photo_number": "12"
+          "photo_number": "12",
+          "exif": {
+            "camera": "iPhone 15",
+            "date": "2024-09-26",
+            "size": "3785 × 2838"
+          }
         }
       ]
     }
