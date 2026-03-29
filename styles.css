@@ -1,24 +1,24 @@
 /* ============================================
-   FOTOBLOG VINTAGE — Analog Film Aesthetic
+   FOTOBLOG — Inspired by Bigbite Creative
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
 /* === CSS Variables === */
 :root {
-    --bg-cream: #F5F0E6;
-    --bg-paper: #EDE5D8;
-    --sepia: #704214;
-    --sepia-light: #8B5A2B;
-    --green-military: #556B2F;
-    --green-dark: #3D4F23;
-    --text-brown: #3E2723;
-    --text-light: #5D4037;
-    --text-muted: #8D6E63;
-    --border-dark: #4E342E;
+    --bg-cream: #FAF7F2;
+    --bg-paper: #F0EBE3;
+    --accent-terracotta: #C4785A;
+    --accent-terracotta-dark: #A85F42;
+    --accent-sage: #8B9A7D;
+    --accent-sage-dark: #6B7A5D;
+    --text-dark: #2D2418;
+    --text-medium: #5A4A3A;
+    --text-muted: #8A7A6A;
+    --border-light: #E0D8CC;
     --polaroid-white: #FEFEFA;
-    --shadow-color: rgba(62, 39, 35, 0.3);
-    --accent-red: #8B3A3A;
+    --shadow-color: rgba(45, 36, 24, 0.12);
+    --shadow-hover: rgba(45, 36, 24, 0.2);
 }
 
 /* === Reset & Base === */
@@ -27,13 +27,14 @@
 html { scroll-behavior: smooth; }
 
 body {
-    font-family: 'Lora', Georgia, serif;
+    font-family: 'DM Sans', -apple-system, sans-serif;
     background: var(--bg-cream);
-    color: var(--text-brown);
+    color: var(--text-dark);
     line-height: 1.7;
     font-size: 16px;
     min-height: 100vh;
     position: relative;
+    font-weight: 400;
 }
 
 /* Paper texture overlay */
@@ -69,7 +70,7 @@ header {
 }
 
 .logo {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-style: italic;
     font-size: 2.5rem;
     font-weight: 600;
@@ -84,7 +85,7 @@ header {
 }
 
 .tagline {
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-style: italic;
     font-size: 0.95rem;
     color: var(--text-muted);
@@ -100,7 +101,7 @@ header {
 }
 
 .nav-link {
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     color: var(--text-light);
     text-decoration: none;
@@ -135,7 +136,7 @@ header {
 }
 
 .year-filter select {
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     padding: 0.3rem 0.6rem;
     border: 1px solid var(--sepia-light);
@@ -198,7 +199,7 @@ main {
 }
 
 .hero-day {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-style: italic;
     font-size: 0.9rem;
     color: var(--sepia);
@@ -206,7 +207,7 @@ main {
 }
 
 .hero-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--text-brown);
@@ -227,7 +228,7 @@ main {
 }
 
 .section-header h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 1.75rem;
     font-weight: 600;
     color: var(--text-brown);
@@ -314,7 +315,7 @@ main {
 }
 
 .roll-card-name {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-brown);
@@ -344,7 +345,7 @@ main {
     background: var(--sepia);
     color: var(--bg-cream);
     text-decoration: none;
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     border-radius: 3px;
     transition: background 0.3s ease;
@@ -401,7 +402,7 @@ main {
     position: absolute;
     bottom: 0.5rem;
     right: 0.75rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-style: italic;
     font-size: 0.75rem;
     color: var(--sepia);
@@ -412,7 +413,7 @@ main {
     position: absolute;
     bottom: 0.5rem;
     left: 0.75rem;
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.75rem;
     font-style: italic;
     color: var(--text-muted);
@@ -481,14 +482,14 @@ main {
 }
 
 .lightbox-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 1.5rem;
     font-style: italic;
     margin-bottom: 0.5rem;
 }
 
 .lightbox-meta {
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     color: rgba(245, 240, 230, 0.7);
     display: flex;
@@ -501,7 +502,7 @@ main {
     position: absolute;
     bottom: 1rem;
     right: 1rem;
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-style: italic;
     font-size: 0.9rem;
     color: rgba(245, 240, 230, 0.6);
@@ -578,7 +579,7 @@ footer {
 }
 
 .footer-seal span {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-style: italic;
     font-size: 0.85rem;
     color: var(--sepia);
@@ -587,7 +588,7 @@ footer {
 }
 
 .footer-copyright {
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     font-style: italic;
     color: var(--text-muted);
@@ -607,7 +608,7 @@ footer {
 }
 
 .empty-state h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 1.5rem;
     color: var(--text-brown);
     margin-bottom: 0.5rem;
@@ -684,7 +685,7 @@ footer {
 }
 
 .upload-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Serif Display', serif;
     font-size: 2rem;
     text-align: center;
     margin-bottom: 0.5rem;
@@ -711,7 +712,7 @@ footer {
 
 .form-group label {
     display: block;
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
     margin-bottom: 0.5rem;
@@ -722,7 +723,7 @@ footer {
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
     border: 1px solid var(--sepia-light);
     border-radius: 3px;
@@ -773,7 +774,7 @@ footer {
     color: var(--bg-cream);
     border: none;
     border-radius: 3px;
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.95rem;
     cursor: pointer;
     transition: background 0.3s ease;
@@ -829,7 +830,7 @@ footer {
     color: var(--bg-cream);
     border: none;
     border-radius: 3px;
-    font-family: 'Lora', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.3s ease;
