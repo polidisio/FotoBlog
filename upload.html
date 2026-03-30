@@ -325,7 +325,8 @@
 
                 // Write to GitHub
                 const newContent = JSON.stringify(rollsData, null, 2);
-                const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
+                // Proper UTF-8 base64 encoding
+                const encodedContent = btoa(String.fromCharCode(...new TextEncoder().encode(newContent)));
 
                 const putRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data/rolls.json`, {
                     method: 'PUT',
