@@ -370,6 +370,19 @@ main {
     color: var(--text-cream);
 }
 
+.photo-exif {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
 /* === Lightbox === */
 .lightbox {
     display: none;

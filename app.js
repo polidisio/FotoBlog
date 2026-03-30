@@ -123,11 +123,21 @@ async function renderRoll(rollId) {
 
     let html = '';
     currentRollPhotos.forEach((photo, index) => {
+        let exifHtml = '';
+        if (photo.exif) {
+            const exif = photo.exif;
+            exifHtml = '<div class="photo-exif">';
+            if (exif.iso) exifHtml += `<span>ISO ${exif.iso}</span>`;
+            if (exif.aperture) exifHtml += `<span>ƒ/${exif.aperture}</span>`;
+            if (exif.exposure) exifHtml += `<span>${exif.exposure}</span>`;
+            exifHtml += '</div>';
+        }
         html += `
             <div class="photo-item" onclick="openLightbox(${index})" style="animation-delay: ${index * 0.05}s">
                 <img src="${photo.filename}" alt="${photo.title}" class="vignette">
                 <span class="photo-number">#${photo.photo_number || index + 1}</span>
                 <span class="photo-title">${photo.title || ''}</span>
+                ${exifHtml}
             </div>
         `;
     });
@@ -160,11 +170,21 @@ function renderAllRolls() {
 
     rolls.forEach(roll => {
         (roll.photos || []).forEach((photo, index) => {
+            let exifHtml = '';
+            if (photo.exif) {
+                const exif = photo.exif;
+                exifHtml = '<div class="photo-exif">';
+                if (exif.iso) exifHtml += `<span>ISO ${exif.iso}</span>`;
+                if (exif.aperture) exifHtml += `<span>ƒ/${exif.aperture}</span>`;
+                if (exif.exposure) exifHtml += `<span>${exif.exposure}</span>`;
+                exifHtml += '</div>';
+            }
             html += `
                 <div class="photo-item" onclick="openLightboxForPhoto('${roll.id}', ${index})" style="animation-delay: ${index * 0.05}s">
                     <img src="${photo.filename}" alt="${photo.title}" class="vignette">
                     <span class="photo-number">#${photo.photo_number || index + 1}</span>
                     <span class="photo-title">${photo.title || ''}</span>
+                    ${exifHtml}
                 </div>
             `;
         });
@@ -389,19 +409,61 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* === Update Hero === */
-function updateHero(rollsData) {
-    if (!rollsData || !rollsData.length) return;
-    const firstRoll = rollsData[0];
-    if (!firstRoll.photos || !firstRoll.photos.length) return;
-    const firstPhoto = firstRoll.photos[0];
+let heroPhotos = [];
+let heroIndex = 0;
+let heroInterval = null;
 
+function initHeroRotation(rollsData) {
+    if (!rollsData || !rollsData.length) return;
+
+    // Collect all photos from all rolls
+    heroPhotos = [];
+    rollsData.forEach(roll => {
+        if (roll.photos) {
+            roll.photos.forEach(photo => {
+                heroPhotos.push({
+                    ...photo,
+                    rollName: roll.name,
+                    rollLocation: roll.location,
+                    rollCamera: roll.camera
+                });
+            });
+        }
+    });
+
+    if (heroPhotos.length === 0) return;
+
+    // Clear any existing interval
+    if (heroInterval) {
+        clearInterval(heroInterval);
+    }
+
+    heroIndex = 0;
+
+    // Rotate every 5 seconds
+    heroInterval = setInterval(() => {
+        heroIndex = (heroIndex + 1) % heroPhotos.length;
+        updateHeroPhoto(heroPhotos[heroIndex]);
+    }, 5000);
+
+    // Show first photo
+    updateHeroPhoto(heroPhotos[0]);
+}
+
+function updateHeroPhoto(photo) {
     const heroImg = document.getElementById('hero-img');
     const heroTitle = document.getElementById('hero-title');
     const heroMeta = document.getElementById('hero-meta');
     const heroDay = document.getElementById('hero-day');
 
-    if (heroImg && firstPhoto.filename) heroImg.src = firstPhoto.filename;
-    if (heroTitle) heroTitle.textContent = firstPhoto.title || firstRoll.name;
-    if (heroDay) heroDay.textContent = 'Day ' + (firstPhoto.day_number || '001');
-    if (heroMeta) heroMeta.textContent = firstRoll.location + ' · ' + firstRoll.camera;
+    if (heroImg) heroImg.src = photo.filename;
+    if (heroTitle) heroTitle.textContent = photo.title || photo.rollName;
+    if (heroDay) heroDay.textContent = 'Day ' + (photo.day_number || '001');
+
+    const camera = photo.rollCamera || (photo.exif && photo.exif.camera) || '';
+    if (heroMeta) heroMeta.textContent = photo.rollLocation + (camera ? ' · ' + camera : '');
+}
+
+function updateHero(rollsData) {
+    initHeroRotation(rollsData);
 }
