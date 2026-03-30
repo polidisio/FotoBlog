@@ -95,7 +95,7 @@ async function renderRoll(rollId) {
     const roll = rolls.find(r => r.id === rollId);
 
     if (!roll) {
-        container.innerHTML = '<div class="empty-state"><h2>Roll no encontrado</h2></div>';
+        container.innerHTML = '<div class="empty-state"><h2>Rollo no encontrado</h2></div>';
         return;
     }
 
@@ -133,6 +133,53 @@ async function renderRoll(rollId) {
     });
 
     container.innerHTML = `<div class="photos-grid">${html}</div>`;
+}
+
+/* === Render All Rolls (when no ID provided) === */
+function renderAllRolls() {
+    const container = document.getElementById('roll-photos');
+    const rollInfo = document.getElementById('roll-info');
+
+    if (!container) return;
+
+    if (!rolls.length) {
+        container.innerHTML = '<div class="empty-state"><h2>No hay rollos</h2></div>';
+        return;
+    }
+
+    // Show section header
+    if (rollInfo) {
+        rollInfo.innerHTML = `
+            <h1 class="roll-title">Todos los Rollos</h1>
+            <p class="roll-description">${rolls.length} rollos en total</p>
+        `;
+    }
+
+    // Render all photos from all rolls
+    let html = '<div class="section-header"><h2>Todas las Fotos</h2></div><div class="photos-grid">';
+
+    rolls.forEach(roll => {
+        (roll.photos || []).forEach((photo, index) => {
+            html += `
+                <div class="photo-item" onclick="openLightboxForPhoto('${roll.id}', ${index})" style="animation-delay: ${index * 0.05}s">
+                    <img src="${photo.filename}" alt="${photo.title}" class="vignette">
+                    <span class="photo-number">#${photo.photo_number || index + 1}</span>
+                    <span class="photo-title">${photo.title || ''}</span>
+                </div>
+            `;
+        });
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+/* === Open lightbox for specific photo in specific roll === */
+function openLightboxForPhoto(rollId, photoIndex) {
+    const roll = rolls.find(r => r.id === rollId);
+    if (!roll || !roll.photos) return;
+    currentRollPhotos = roll.photos;
+    openLightbox(photoIndex);
 }
 
 /* === Year Filter === */
@@ -190,15 +237,46 @@ function updateLightboxContent() {
     if (title) title.textContent = photo.title || '';
     if (counter) counter.textContent = `${currentPhotoIndex + 1} / ${currentRollPhotos.length}`;
 
+    // Notes and basic meta
     let metaHtml = '';
     if (photo.notes) metaHtml += `<span>📝 ${photo.notes}</span>`;
-    if (photo.exif) {
-        const exif = photo.exif;
-        if (exif.camera) metaHtml += `<span>📷 ${exif.camera}</span>`;
-        if (exif.size) metaHtml += `<span>📐 ${exif.size}</span>`;
-        if (exif.date) metaHtml += `<span>📅 ${exif.date}</span>`;
-    }
     if (meta) meta.innerHTML = metaHtml;
+
+    // Add EXIF section
+    const exifSection = document.getElementById('lightbox-exif');
+    if (exifSection) {
+        if (photo.exif) {
+            const exif = photo.exif;
+            let exifHtml = '';
+            if (exif.camera) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">📷 Cámara</span><span class="lightbox-exif-value">${exif.camera}</span></div>`;
+            }
+            if (exif.size) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">📐 Tamaño</span><span class="lightbox-exif-value">${exif.size}</span></div>`;
+            }
+            if (exif.date) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">📅 Fecha</span><span class="lightbox-exif-value">${exif.date}</span></div>`;
+            }
+            if (exif.iso) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">📊 ISO</span><span class="lightbox-exif-value">${exif.iso}</span></div>`;
+            }
+            if (exif.aperture) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">🔆 Apertura</span><span class="lightbox-exif-value">f/${exif.aperture}</span></div>`;
+            }
+            if (exif.exposure) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">⏱️ Exposición</span><span class="lightbox-exif-value">${exif.exposure}s</span></div>`;
+            }
+            if (exif.focalLength) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">🎯 Focal</span><span class="lightbox-exif-value">${exif.focalLength}mm</span></div>`;
+            }
+            if (exif.lens) {
+                exifHtml += `<div class="lightbox-exif-item"><span class="lightbox-exif-label">🔍 Lente</span><span class="lightbox-exif-value">${exif.lens}</span></div>`;
+            }
+            exifSection.innerHTML = exifHtml || '<span style="color:rgba(245,240,230,0.5);font-style:italic;">Sin datos EXIF</span>';
+        } else {
+            exifSection.innerHTML = '<span style="color:rgba(245,240,230,0.5);font-style:italic;">Sin datos EXIF</span>';
+        }
+    }
 }
 
 function closeLightbox() {
@@ -283,9 +361,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Roll page
     if (document.getElementById('roll-photos')) {
         const rollId = getRollIdFromUrl();
-        if (rollId) {
-            loadRolls().then(() => renderRoll(rollId));
-        }
+        loadRolls().then(() => {
+            if (rollId) {
+                renderRoll(rollId);
+            } else {
+                // Show all rolls when no ID provided
+                renderAllRolls();
+            }
+        });
     }
 
     // Lightbox close on backdrop click

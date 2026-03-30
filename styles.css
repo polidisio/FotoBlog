@@ -196,29 +196,33 @@ main {
     left: 0;
     right: 0;
     text-align: center;
+    background: rgba(250, 247, 242, 0.95);
+    padding: 1rem;
+    margin: 0 1rem 1.5rem;
+    border-radius: 4px;
 }
 
 .hero-day {
     font-family: 'DM Serif Display', serif;
     font-style: italic;
-    font-size: 0.9rem;
-    color: var(--sepia);
+    font-size: 0.85rem;
+    color: var(--accent-terracotta);
     letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .hero-title {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
-    color: var(--text-brown);
+    color: var(--text-dark);
     margin-top: 0.5rem;
 }
 
 .hero-meta {
-    font-style: italic;
     font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
+    color: var(--text-medium);
+    margin-top: 0.5rem;
 }
 
 /* === Section Headers === */
@@ -479,6 +483,7 @@ main {
     text-align: center;
     color: var(--bg-cream);
     margin-top: 1.5rem;
+    max-width: 600px;
 }
 
 .lightbox-title {
@@ -486,16 +491,54 @@ main {
     font-size: 1.5rem;
     font-style: italic;
     margin-bottom: 0.5rem;
+    color: var(--bg-cream);
 }
 
 .lightbox-meta {
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: rgba(245, 240, 230, 0.7);
     display: flex;
     justify-content: center;
     gap: 1.5rem;
     flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.lightbox-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.lightbox-exif {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(245, 240, 230, 0.2);
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.lightbox-exif-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.lightbox-exif-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(245, 240, 230, 0.5);
+}
+
+.lightbox-exif-value {
+    font-size: 0.95rem;
+    color: var(--bg-cream);
+    font-weight: 500;
 }
 
 .lightbox-counter {
