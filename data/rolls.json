@@ -91,6 +91,19 @@
           "notes": "Cuando en la oscuridad mandan los colores",
           "day_number": "002",
           "photo_number": "01"
+        },
+        {
+          "id": "003-02",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774461721/fotoblog/p59kt6roeauo0yyxkqdr.jpg",
+          "title": "Palmera al contraluz",
+          "notes": "Horas mágicas en Lanzarote",
+          "day_number": "001",
+          "photo_number": "12",
+          "exif": {
+            "camera": "iPhone 15",
+            "date": "2024-09-26",
+            "size": "3785 × 2838"
+          }
         }
       ]
     },
