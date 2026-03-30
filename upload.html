@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subir Foto — FotoBlog de Jose</title>
     <link rel="stylesheet" href="./styles.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
 </head>
 <body>
     <header>
@@ -74,6 +73,7 @@
         <p class="footer-copyright">Cada foto cuenta una historia del pasado</p>
     </footer>
 
+    <script src="//upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
     <script>
         const CLOUD_NAME = 'dk3t3fas3';
         const UPLOAD_PRESET = 'fotoblog_unsigned';
@@ -88,46 +88,100 @@
         const SUBMIT_BTN = document.getElementById('submitBtn');
         const RESULT = document.getElementById('uploadResult');
 
+        let uploadedInfo = null;
+
         // Open Cloudinary widget on click
         DROPZONE.addEventListener('click', function() {
             cloudinary.openUploadWidget({
                 cloud_name: CLOUD_NAME,
                 upload_preset: UPLOAD_PRESET,
-                sources: ['local', 'camera', 'image_search'],
+                sources: ['local', 'camera'],
                 multiple: false,
                 cropping: false,
-                folder: 'fotoblog'
+                folder: 'fotoblog',
+                show_exif: true,
+                styles: {
+                    palette: {
+                        window: "#2D1B0E",
+                        windowBorder: "#C4704A",
+                        tabIcon: "#C4704A",
+                        menuIcons: "#C4704A",
+                        textDark: "#F5EDE0",
+                        textLight: "#F5EDE0",
+                        link: "#C4704A",
+                        action: "#C4704A",
+                        inactiveTabIcon: "#A89888",
+                        error: "#C4704A",
+                        inProgress: "#C4704A",
+                        complete: "#8B9A7D",
+                        sourceBg: "#1A0F08"
+                    }
+                }
             }, function(error, result) {
+                console.log('Widget callback:', error, result);
+                if (error) {
+                    console.error('Upload error:', error);
+                    return;
+                }
                 if (result && result.event === 'success') {
-                    const info = result.info;
-                    UPLOADED_URL.value = info.secure_url;
-                    // Extract public_id from URL for display
-                    const publicId = info.public_id.split('/').pop();
-                    UPLOADED_FILENAME.value = publicId;
-                    DROPZONE.querySelector('p').textContent = '✅ ' + info.original_filename;
+                    uploadedInfo = result.info;
+                    UPLOADED_URL.value = uploadedInfo.secure_url;
+
+                    DROPZONE.querySelector('p').textContent = '✅ ' + uploadedInfo.original_filename;
                     DROPZONE.style.borderColor = 'var(--accent)';
 
                     // Auto-fill title from filename if empty
-                    if (!TITLE_INPUT.value) {
-                        TITLE_INPUT.value = info.original_filename.replace(/[-_]/g, ' ');
+                    if (!TITLE_INPUT.value && uploadedInfo.original_filename) {
+                        TITLE_INPUT.value = uploadedInfo.original_filename.replace(/[-_]/g, ' ');
                     }
 
                     // Auto-fill day from date if available
-                    if (info.created_at && !DAY_NUMBER.value) {
-                        const date = new Date(info.created_at);
+                    if (uploadedInfo.created_at && !DAY_NUMBER.value) {
+                        const date = new Date(uploadedInfo.created_at);
                         DAY_NUMBER.value = String(date.getDate()).padStart(2, '0');
                     }
-                }
-                if (error) {
-                    console.error('Upload error:', error);
+
+                    // Extract EXIF if available
+                    extractExifFromUrl(uploadedInfo.secure_url);
                 }
             });
         });
 
+        // Extract EXIF from uploaded image
+        function extractExifFromUrl(url) {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function() {
+                EXIF.getData(img, function() {
+                    const allTags = EXIF.getAllTags(this);
+                    console.log('EXIF data:', allTags);
+
+                    // Auto-fill camera if available
+                    const camera = allTags.Make + ' ' + allTags.Model;
+                    if (camera && camera.trim() !== 'undefined undefined') {
+                        // Could add camera field here if needed
+                    }
+
+                    // Auto-fill day from EXIF date if available
+                    const dateTaken = allTags.DateTimeOriginal || allTags.DateTime;
+                    if (dateTaken && !DAY_NUMBER.value) {
+                        const parts = String(dateTaken).match(/(\d{4}):(\d{2}):(\d{2})/);
+                        if (parts) {
+                            DAY_NUMBER.value = parts[2] + parts[3];
+                        }
+                    }
+                });
+            };
+            img.onerror = function() {
+                console.log('Could not load image for EXIF extraction');
+            };
+            img.src = url;
+        }
+
         SUBMIT_BTN.addEventListener('click', function() {
             const url = UPLOADED_URL.value;
-            if (!url) {
-                RESULT.innerHTML = '<div class="result error"><strong>Selecciona una foto primero</strong></div>';
+            if (!url || !uploadedInfo) {
+                RESULT.innerHTML = '<div class="result error"><strong>Selecciona y sube una foto primero</strong></div>';
                 RESULT.style.display = 'block';
                 return;
             }
@@ -151,13 +205,20 @@
 
             RESULT.innerHTML = `
                 <div class="result success">
-                    <strong>✅ ¡Foto subida a Cloudinary!</strong><br><br>
-                    <strong>📋 Copia este JSON y añádelo al rollo en data/rolls.json:</strong>
+                    <strong>✅ ¡JSON generado!</strong><br><br>
+                    <strong>📋 Añádelo al rollo en data/rolls.json:</strong>
                     <div class="json-snippet">${escapeHtml(jsonSnippet)}</div>
-                    <button type="button" class="copy-btn" onclick="copyToClipboard(this, '${jsonSnippet.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">Copiar al portapapeles</button>
+                    <button type="button" class="copy-btn" id="copyBtn">Copiar al portapapeles</button>
                 </div>
             `;
             RESULT.style.display = 'block';
+
+            // Attach copy handler after adding to DOM
+            setTimeout(() => {
+                document.getElementById('copyBtn').addEventListener('click', function() {
+                    copyToClipboard(this, jsonSnippet);
+                });
+            }, 100);
         });
 
         function escapeHtml(str) {
