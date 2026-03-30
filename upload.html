@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subir Foto — FotoBlog de Jose</title>
     <link rel="stylesheet" href="./styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
 <body>
     <header>
@@ -15,7 +16,6 @@
             <nav class="nav-links">
                 <a href="./" class="nav-link">🏠 Inicio</a>
                 <a href="./roll.html" class="nav-link">🎞️ Rollos</a>
-                <a href="./upload.html" class="nav-link">📤 Subir</a>
             </nav>
         </div>
     </header>
@@ -25,14 +25,15 @@
             <h1 class="upload-title">Nueva Exposición</h1>
             <p class="upload-subtitle">Añade una foto a tu colección analógica</p>
 
-            <form class="upload-form" id="uploadForm">
+            <div class="upload-form">
                 <div class="form-group">
-                    <label for="fileInput">Negativo / Foto</label>
+                    <label>Negativo / Foto</label>
                     <div class="file-drop" id="dropZone">
                         <div class="icon">📷</div>
-                        <p id="dropText">Arrastra una foto aquí o haz click para seleccionar</p>
-                        <input type="file" id="fileInput" accept="image/*" required>
+                        <p>Selecciona una foto para subir</p>
                     </div>
+                    <input type="hidden" id="uploaded-url">
+                    <input type="hidden" id="uploaded-filename">
                 </div>
 
                 <div class="form-group">
@@ -60,9 +61,9 @@
                     <textarea id="notes" placeholder="Notas sobre esta exposición..."></textarea>
                 </div>
 
-                <button type="submit" class="btn" id="submitBtn">Revelar y Subir</button>
+                <button type="button" class="btn" id="submitBtn">Generar JSON</button>
                 <div id="uploadResult"></div>
-            </form>
+            </div>
         </div>
     </main>
 
@@ -75,127 +76,89 @@
 
     <script>
         const CLOUD_NAME = 'dk3t3fas3';
+        const UPLOAD_PRESET = 'fotoblog_unsigned';
         const DROPZONE = document.getElementById('dropZone');
-        const FILE_INPUT = document.getElementById('fileInput');
-        const DROP_TEXT = document.getElementById('dropText');
-        const FORM = document.getElementById('uploadForm');
+        const UPLOADED_URL = document.getElementById('uploaded-url');
+        const UPLOADED_FILENAME = document.getElementById('uploaded-filename');
+        const TITLE_INPUT = document.getElementById('title');
+        const ROLL_ID = document.getElementById('roll-id');
+        const DAY_NUMBER = document.getElementById('day-number');
+        const PHOTO_NUMBER = document.getElementById('photo-number');
+        const NOTES = document.getElementById('notes');
         const SUBMIT_BTN = document.getElementById('submitBtn');
         const RESULT = document.getElementById('uploadResult');
 
-        let currentMetadata = {};
+        // Open Cloudinary widget on click
+        DROPZONE.addEventListener('click', function() {
+            cloudinary.openUploadWidget({
+                cloud_name: CLOUD_NAME,
+                upload_preset: UPLOAD_PRESET,
+                sources: ['local', 'camera', 'image_search'],
+                multiple: false,
+                cropping: false,
+                folder: 'fotoblog'
+            }, function(error, result) {
+                if (result && result.event === 'success') {
+                    const info = result.info;
+                    UPLOADED_URL.value = info.secure_url;
+                    // Extract public_id from URL for display
+                    const publicId = info.public_id.split('/').pop();
+                    UPLOADED_FILENAME.value = publicId;
+                    DROPZONE.querySelector('p').textContent = '✅ ' + info.original_filename;
+                    DROPZONE.style.borderColor = 'var(--accent)';
 
-        // File input change handler
-        FILE_INPUT.addEventListener('change', (e) => {
-            if (FILE_INPUT.files.length) {
-                const file = FILE_INPUT.files[0];
-                if (DROP_TEXT) DROP_TEXT.textContent = `📎 ${file.name}`;
-                autoFillFromFile(file);
-            }
+                    // Auto-fill title from filename if empty
+                    if (!TITLE_INPUT.value) {
+                        TITLE_INPUT.value = info.original_filename.replace(/[-_]/g, ' ');
+                    }
+
+                    // Auto-fill day from date if available
+                    if (info.created_at && !DAY_NUMBER.value) {
+                        const date = new Date(info.created_at);
+                        DAY_NUMBER.value = String(date.getDate()).padStart(2, '0');
+                    }
+                }
+                if (error) {
+                    console.error('Upload error:', error);
+                }
+            });
         });
 
-        // Drag and drop support
-        DROPZONE.addEventListener('dragover', (e) => { e.preventDefault(); DROPZONE.style.borderColor = 'var(--accent)'; });
-        DROPZONE.addEventListener('dragleave', () => { DROPZONE.style.borderColor = ''; });
-        DROPZONE.addEventListener('drop', (e) => {
-            e.preventDefault();
-            DROPZONE.style.borderColor = '';
-            if (e.dataTransfer.files.length) {
-                FILE_INPUT.files = e.dataTransfer.files;
-                const file = e.dataTransfer.files[0];
-                if (DROP_TEXT) DROP_TEXT.textContent = `📎 ${file.name}`;
-                autoFillFromFile(file);
-            }
-        });
-
-        function autoFillFromFile(file) {
-            if (!file.type.startsWith('image/')) return;
-            const name = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-            document.getElementById('title').value = name;
-
-            // Try EXIF
-            if (typeof EXIF !== 'undefined') {
-                EXIF.getData(file, function() {
-                    try {
-                        const dateTime = EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime');
-                        if (dateTime) {
-                            // Parse EXIF date to day number (simplified)
-                            const dayMatch = String(dateTime).match(/(\d{4}):(\d{2}):(\d{2})/);
-                            if (dayMatch) {
-                                document.getElementById('day-number').value = `${dayMatch[2]}${dayMatch[3]}`;
-                            }
-                        }
-                    } catch(e) {}
-                });
-            }
-        }
-
-        FORM.onsubmit = async (e) => {
-            e.preventDefault();
-            if (!FILE_INPUT.files.length) {
-                alert('Selecciona una foto primero');
+        SUBMIT_BTN.addEventListener('click', function() {
+            const url = UPLOADED_URL.value;
+            if (!url) {
+                RESULT.innerHTML = '<div class="result error"><strong>Selecciona una foto primero</strong></div>';
+                RESULT.style.display = 'block';
                 return;
             }
 
-            const file = FILE_INPUT.files[0];
-            SUBMIT_BTN.disabled = true;
-            SUBMIT_BTN.textContent = 'Revelando...';
-            RESULT.style.display = 'none';
+            const title = TITLE_INPUT.value || 'Sin título';
+            const rollId = ROLL_ID.value || '001';
+            const dayNum = DAY_NUMBER.value || '001';
+            const photoNum = PHOTO_NUMBER.value || '01';
+            const notesVal = NOTES.value || '';
 
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', 'fotoblog_unsigned');
-            formData.append('folder', 'fotoblog');
+            const entry = {
+                id: `${rollId}-${photoNum}`,
+                filename: url,
+                title: title,
+                notes: notesVal,
+                day_number: dayNum,
+                photo_number: photoNum
+            };
 
-            try {
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (data.error) throw new Error(data.error.message);
+            const jsonSnippet = JSON.stringify(entry, null, 2);
 
-                // Build entry JSON
-                const title = document.getElementById('title').value || 'Sin título';
-                const rollId = document.getElementById('roll-id').value || '001';
-                const dayNumber = document.getElementById('day-number').value || '001';
-                const photoNumber = document.getElementById('photo-number').value || '01';
-                const notes = document.getElementById('notes').value || '';
-
-                const entry = {
-                    id: `${rollId}-${photoNumber}`,
-                    filename: data.secure_url,
-                    title: title,
-                    notes: notes,
-                    day_number: dayNumber,
-                    photo_number: photoNumber
-                };
-
-                const jsonSnippet = JSON.stringify(entry, null, 2);
-
-                RESULT.innerHTML = `
-                    <div class="result success">
-                        <strong>✅ ¡Negativo subido a Cloudinary!</strong><br><br>
-                        <strong>📋 Copia este JSON y añádelo al rollo en data/rolls.json:</strong>
-                        <div class="json-snippet">${escapeHtml(jsonSnippet)}</div>
-                        <button type="button" class="copy-btn" onclick="copyToClipboard(this, ${JSON.stringify(jsonSnippet).replace(/"/g, '&quot;')})">Copiar al portapapeles</button>
-                    </div>
-                `;
-                RESULT.style.display = 'block';
-
-                FORM.reset();
-
-            } catch (err) {
-                RESULT.innerHTML = `
-                    <div class="result error">
-                        <strong>❌ Error:</strong> ${err.message}
-                    </div>
-                `;
-                RESULT.style.display = 'block';
-            }
-
-            SUBMIT_BTN.disabled = false;
-            SUBMIT_BTN.textContent = 'Revelar y Subir';
-        };
+            RESULT.innerHTML = `
+                <div class="result success">
+                    <strong>✅ ¡Foto subida a Cloudinary!</strong><br><br>
+                    <strong>📋 Copia este JSON y añádelo al rollo en data/rolls.json:</strong>
+                    <div class="json-snippet">${escapeHtml(jsonSnippet)}</div>
+                    <button type="button" class="copy-btn" onclick="copyToClipboard(this, '${jsonSnippet.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">Copiar al portapapeles</button>
+                </div>
+            `;
+            RESULT.style.display = 'block';
+        });
 
         function escapeHtml(str) {
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
