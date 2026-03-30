@@ -24,7 +24,16 @@
             <h1 class="upload-title">Nueva Exposición</h1>
             <p class="upload-subtitle">Añade una foto a tu colección analógica</p>
 
-            <div class="upload-form">
+            <div class="upload-form" id="tokenSetup">
+                <div class="form-group">
+                    <label for="github-token">GitHub Token</label>
+                    <input type="password" id="github-token" placeholder="ghp_...">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Se guarda en tu navegador para futuras publicaciones</p>
+                </div>
+                <button type="button" class="btn" id="saveTokenBtn">Guardar y Continuar</button>
+            </div>
+
+            <div class="upload-form" id="uploadFormContent" style="display: none;">
                 <div class="form-group">
                     <label>Negativo / Foto</label>
                     <div class="file-drop" id="dropZone">
@@ -32,7 +41,6 @@
                         <p>Selecciona una foto para subir</p>
                     </div>
                     <input type="hidden" id="uploaded-url">
-                    <input type="hidden" id="uploaded-filename">
                 </div>
 
                 <div class="form-group">
@@ -65,7 +73,7 @@
                     <div id="exif-display" class="exif-data"></div>
                 </div>
 
-                <button type="button" class="btn" id="submitBtn">Generar JSON</button>
+                <button type="button" class="btn" id="submitBtn">Publicar en el Blog</button>
                 <div id="uploadResult"></div>
             </div>
         </div>
@@ -82,9 +90,11 @@
     <script>
         const CLOUD_NAME = 'dk3t3fas3';
         const UPLOAD_PRESET = 'fotoblog_unsigned';
+        const GITHUB_REPO = 'polidisio/FotoBlog';
+        const GITHUB_BRANCH = 'main';
+
         const DROPZONE = document.getElementById('dropZone');
         const UPLOADED_URL = document.getElementById('uploaded-url');
-        const UPLOADED_FILENAME = document.getElementById('uploaded-filename');
         const TITLE_INPUT = document.getElementById('title');
         const ROLL_ID = document.getElementById('roll-id');
         const DAY_NUMBER = document.getElementById('day-number');
@@ -94,9 +104,28 @@
         const RESULT = document.getElementById('uploadResult');
         const EXIF_GROUP = document.getElementById('exif-group');
         const EXIF_DISPLAY = document.getElementById('exif-display');
+        const TOKEN_SETUP = document.getElementById('tokenSetup');
+        const TOKEN_INPUT = document.getElementById('github-token');
+        const SAVE_TOKEN_BTN = document.getElementById('saveTokenBtn');
 
-        let uploadedInfo = null;
         let extractedExif = null;
+
+        // Check for stored token
+        const storedToken = localStorage.getItem('fotoblog_github_token');
+        if (storedToken) {
+            TOKEN_SETUP.style.display = 'none';
+            document.getElementById('uploadFormContent').style.display = 'block';
+        }
+
+        // Save token
+        SAVE_TOKEN_BTN.addEventListener('click', function() {
+            const token = TOKEN_INPUT.value.trim();
+            if (token) {
+                localStorage.setItem('fotoblog_github_token', token);
+                TOKEN_SETUP.style.display = 'none';
+                document.getElementById('uploadFormContent').style.display = 'block';
+            }
+        });
 
         // Open Cloudinary widget on click
         DROPZONE.addEventListener('click', function() {
@@ -107,7 +136,6 @@
                 multiple: false,
                 cropping: false,
                 folder: 'fotoblog',
-                show_exif: true,
                 styles: {
                     palette: {
                         window: "#2D1B0E",
@@ -126,252 +154,213 @@
                     }
                 }
             }, function(error, result) {
-                console.log('Widget callback:', error, result);
                 if (error) {
-                    console.error('Upload error:', error);
                     RESULT.innerHTML = '<div class="result error"><strong>Error: ' + error.message + '</strong></div>';
                     RESULT.style.display = 'block';
                     return;
                 }
                 if (result && result.event === 'success') {
                     const info = result.info;
-                    uploadedInfo = info;
                     UPLOADED_URL.value = info.secure_url;
 
                     DROPZONE.querySelector('p').textContent = '✅ ¡Foto subida! ' + info.original_filename;
                     DROPZONE.style.borderColor = 'var(--accent)';
 
-                    // Show EXIF data if available from Cloudinary
-                    console.log('Cloudinary info:', info);
-                    if (info.exif) {
-                        console.log('EXIF from Cloudinary:', info.exif);
-                    }
-
-                    // Auto-fill title from filename if empty
                     if (!TITLE_INPUT.value && info.original_filename) {
                         TITLE_INPUT.value = info.original_filename.replace(/[-_]/g, ' ');
                     }
 
-                    // Auto-fill day from Cloudinary's created_at
-                    if (info.created_at && !DAY_NUMBER.value) {
-                        const date = new Date(info.created_at);
-                        DAY_NUMBER.value = String(date.getDate()).padStart(2, '0');
-                    }
-
-                    // Try to extract EXIF client-side as backup
                     extractExifFromUrl(info.secure_url);
-                }
-                if (result && result.event === 'close') {
-                    console.log('Widget closed');
                 }
             });
         });
 
-        // Extract EXIF from uploaded image
         function extractExifFromUrl(url) {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
             img.onload = function() {
                 EXIF.getData(img, function() {
                     const allTags = EXIF.getAllTags(this);
-                    console.log('EXIF data:', allTags);
-
-                    // Build EXIF object for display
                     extractedExif = {};
 
-                    // Camera
                     const make = allTags.Make || '';
                     const model = allTags.Model || '';
-                    if (make || model) {
-                        extractedExif.camera = (make + ' ' + model).trim();
-                    }
+                    if (make || model) extractedExif.camera = (make + ' ' + model).trim();
 
-                    // Date taken
                     const dateTaken = allTags.DateTimeOriginal || allTags.DateTime;
-                    if (dateTaken) {
-                        extractedExif.date = String(dateTaken).replace(/:/g, '-').split(' ')[0];
-                    }
+                    if (dateTaken) extractedExif.date = String(dateTaken).replace(/:/g, '-').split(' ')[0];
 
-                    // Size
                     if (allTags.PixelXDimension && allTags.PixelYDimension) {
                         extractedExif.size = `${allTags.PixelXDimension} × ${allTags.PixelYDimension}`;
                     }
-
-                    // ISO
-                    if (allTags.ISOSpeedRatings) {
-                        extractedExif.iso = 'ISO ' + allTags.ISOSpeedRatings;
-                    }
-
-                    // Aperture
-                    if (allTags.FNumber) {
-                        extractedExif.aperture = 'ƒ/' + allTags.FNumber;
-                    }
-
-                    // Exposure
+                    if (allTags.ISOSpeedRatings) extractedExif.iso = 'ISO ' + allTags.ISOSpeedRatings;
+                    if (allTags.FNumber) extractedExif.aperture = 'ƒ/' + allTags.FNumber;
                     if (allTags.ExposureTime) {
                         const exp = allTags.ExposureTime;
-                        if (exp < 1) {
-                            extractedExif.exposure = '1/' + Math.round(1/exp) + 's';
-                        } else {
-                            extractedExif.exposure = exp + 's';
-                        }
+                        extractedExif.exposure = exp < 1 ? '1/' + Math.round(1/exp) + 's' : exp + 's';
                     }
+                    if (allTags.FocalLength) extractedExif.focal = allTags.FocalLength + 'mm';
+                    if (allTags.LensModel) extractedExif.lens = allTags.LensModel;
 
-                    // Focal length
-                    if (allTags.FocalLength) {
-                        extractedExif.focal = allTags.FocalLength + 'mm';
-                    }
-
-                    // Lens
-                    if (allTags.LensModel) {
-                        extractedExif.lens = allTags.LensModel;
-                    }
-
-                    // Display EXIF
                     displayExifData(extractedExif);
-
-                    // Auto-fill day from EXIF date if available
-                    if (dateTaken && !DAY_NUMBER.value) {
-                        const parts = String(dateTaken).match(/(\d{4}):(\d{2}):(\d{2})/);
-                        if (parts) {
-                            DAY_NUMBER.value = parts[2] + parts[3];
-                        }
-                    }
                 });
-            };
-            img.onerror = function() {
-                console.log('Could not load image for EXIF extraction');
             };
             img.src = url;
         }
 
         function displayExifData(exif) {
             if (!exif) return;
-
             let html = '<div class="exif-grid">';
-
-            if (exif.camera) {
-                html += `<div class="exif-item"><span class="exif-label">Cámara</span><span class="exif-value">${exif.camera}</span></div>`;
-            }
-            if (exif.date) {
-                html += `<div class="exif-item"><span class="exif-label">Fecha</span><span class="exif-value">${exif.date}</span></div>`;
-            }
-            if (exif.size) {
-                html += `<div class="exif-item"><span class="exif-label">Tamaño</span><span class="exif-value">${exif.size}</span></div>`;
-            }
-            if (exif.iso) {
-                html += `<div class="exif-item"><span class="exif-label">ISO</span><span class="exif-value">${exif.iso}</span></div>`;
-            }
-            if (exif.aperture) {
-                html += `<div class="exif-item"><span class="exif-label">Apertura</span><span class="exif-value">${exif.aperture}</span></div>`;
-            }
-            if (exif.exposure) {
-                html += `<div class="exif-item"><span class="exif-label">Exposición</span><span class="exif-value">${exif.exposure}</span></div>`;
-            }
-            if (exif.focal) {
-                html += `<div class="exif-item"><span class="exif-label">Focal</span><span class="exif-value">${exif.focal}</span></div>`;
-            }
-            if (exif.lens) {
-                html += `<div class="exif-item"><span class="exif-label">Lente</span><span class="exif-value">${exif.lens}</span></div>`;
-            }
-
+            const fields = [
+                ['Cámara', exif.camera],
+                ['Fecha', exif.date],
+                ['Tamaño', exif.size],
+                ['ISO', exif.iso],
+                ['Apertura', exif.aperture],
+                ['Exposición', exif.exposure],
+                ['Focal', exif.focal],
+                ['Lente', exif.lens]
+            ];
+            fields.forEach(([label, value]) => {
+                if (value) html += `<div class="exif-item"><span class="exif-label">${label}</span><span class="exif-value">${value}</span></div>`;
+            });
             html += '</div>';
-
             EXIF_DISPLAY.innerHTML = html;
             EXIF_GROUP.style.display = 'block';
         }
 
-        SUBMIT_BTN.addEventListener('click', function() {
+        SUBMIT_BTN.addEventListener('click', async function() {
             const url = UPLOADED_URL.value;
             if (!url) {
-                RESULT.innerHTML = '<div class="result error"><strong>Selecciona y sube una foto primero</strong></div>';
+                RESULT.innerHTML = '<div class="result error"><strong>Sube una foto primero</strong></div>';
                 RESULT.style.display = 'block';
                 return;
             }
 
-            const title = TITLE_INPUT.value || 'Sin título';
-            const rollId = ROLL_ID.value || '001';
-            const dayNum = DAY_NUMBER.value || '001';
-            const photoNum = PHOTO_NUMBER.value || '01';
-            const notesVal = NOTES.value || '';
-
-            // Build EXIF object for JSON if available
-            let exifObj = null;
-            if (extractedExif && Object.keys(extractedExif).length > 0) {
-                exifObj = {};
-                if (extractedExif.camera) exifObj.camera = extractedExif.camera;
-                if (extractedExif.date) exifObj.date = extractedExif.date;
-                if (extractedExif.size) exifObj.size = extractedExif.size;
-                if (extractedExif.iso) exifObj.iso = extractedExif.iso;
-                if (extractedExif.aperture) exifObj.aperture = extractedExif.aperture;
-                if (extractedExif.exposure) exifObj.exposure = extractedExif.exposure;
-                if (extractedExif.focal) exifObj.focalLength = extractedExif.focal;
-                if (extractedExif.lens) exifObj.lens = extractedExif.lens;
+            const githubToken = localStorage.getItem('fotoblog_github_token');
+            if (!githubToken) {
+                RESULT.innerHTML = '<div class="result error"><strong>Configura tu GitHub Token primero</strong></div>';
+                RESULT.style.display = 'block';
+                return;
             }
 
-            const entry = {
-                id: `${rollId}-${photoNum}`,
-                filename: url,
-                title: title,
-                notes: notesVal,
-                day_number: dayNum,
-                photo_number: photoNum
-            };
+            SUBMIT_BTN.disabled = true;
+            SUBMIT_BTN.textContent = 'Publicando...';
+            RESULT.style.display = 'none';
 
-            if (exifObj) {
-                entry.exif = exifObj;
-            }
+            try {
+                // Get current rolls.json
+                const getRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data/rolls.json`, {
+                    headers: { 'Authorization': 'token ' + githubToken }
+                });
 
-            const jsonSnippet = JSON.stringify(entry, null, 2);
-
-            RESULT.innerHTML = `
-                <div class="result success">
-                    <strong>✅ ¡JSON generado!</strong><br><br>
-                    <strong>📋 Añádelo al rollo en data/rolls.json:</strong>
-                    <div class="json-snippet">${escapeHtml(jsonSnippet)}</div>
-                    <button type="button" class="copy-btn" id="copyBtn">Copiar al portapapeles</button>
-                </div>
-            `;
-            RESULT.style.display = 'block';
-
-            // Attach copy handler after adding to DOM
-            setTimeout(() => {
-                const copyBtnEl = document.getElementById('copyBtn');
-                if (copyBtnEl) {
-                    copyBtnEl.addEventListener('click', function() {
-                        copyToClipboard(this, jsonSnippet);
-                    });
+                if (getRes.status === 404) throw new Error('No se encontró rolls.json');
+                if (getRes.status === 401) {
+                    localStorage.removeItem('fotoblog_github_token');
+                    throw new Error('Token inválido. Vuelve a introducirlo.');
                 }
-            }, 100);
+
+                const currentFile = await getRes.json();
+                const currentSha = currentFile.sha;
+                const currentContent = atob(currentFile.content);
+                const rollsData = JSON.parse(currentContent);
+
+                // Build new photo entry
+                const title = TITLE_INPUT.value || 'Sin título';
+                const rollId = ROLL_ID.value || '001';
+                const dayNum = DAY_NUMBER.value || '001';
+                const photoNum = PHOTO_NUMBER.value || '01';
+
+                const newPhoto = {
+                    id: `${rollId}-${photoNum}`,
+                    filename: url,
+                    title: title,
+                    notes: NOTES.value || '',
+                    day_number: dayNum,
+                    photo_number: photoNum
+                };
+
+                if (extractedExif && Object.keys(extractedExif).length > 0) {
+                    newPhoto.exif = {};
+                    if (extractedExif.camera) newPhoto.exif.camera = extractedExif.camera;
+                    if (extractedExif.date) newPhoto.exif.date = extractedExif.date;
+                    if (extractedExif.size) newPhoto.exif.size = extractedExif.size;
+                    if (extractedExif.iso) newPhoto.exif.iso = extractedExif.iso;
+                    if (extractedExif.aperture) newPhoto.exif.aperture = extractedExif.aperture;
+                    if (extractedExif.exposure) newPhoto.exif.exposure = extractedExif.exposure;
+                    if (extractedExif.focal) newPhoto.exif.focalLength = extractedExif.focal;
+                    if (extractedExif.lens) newPhoto.exif.lens = extractedExif.lens;
+                }
+
+                // Find or create roll
+                let targetRoll = rollsData.rolls.find(r => r.id === rollId);
+                if (!targetRoll) {
+                    targetRoll = {
+                        id: rollId,
+                        name: 'Nuevo Roll ' + rollId,
+                        description: '',
+                        location: '',
+                        camera: extractedExif?.camera || '',
+                        date: new Date().toISOString().split('T')[0],
+                        photos: []
+                    };
+                    rollsData.rolls.push(targetRoll);
+                }
+
+                // Update or add photo
+                const existingIdx = targetRoll.photos.findIndex(p => p.id === newPhoto.id);
+                if (existingIdx >= 0) {
+                    targetRoll.photos[existingIdx] = newPhoto;
+                } else {
+                    targetRoll.photos.push(newPhoto);
+                }
+
+                targetRoll.photos.sort((a, b) => parseInt(a.photo_number) - parseInt(b.photo_number));
+
+                // Write to GitHub
+                const newContent = JSON.stringify(rollsData, null, 2);
+                const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
+
+                const putRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data/rolls.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'token ' + githubToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Nueva foto: ' + title,
+                        content: encodedContent,
+                        sha: currentSha,
+                        branch: GITHUB_BRANCH
+                    })
+                });
+
+                if (putRes.ok) {
+                    RESULT.innerHTML = '<div class="result success"><strong>✅ ¡Publicado!</strong><br>GitHub Pages se actualizará en ~2 minutos.</div>';
+                    RESULT.style.display = 'block';
+                    UPLOADED_URL.value = '';
+                    TITLE_INPUT.value = '';
+                    ROLL_ID.value = '';
+                    DAY_NUMBER.value = '';
+                    PHOTO_NUMBER.value = '';
+                    NOTES.value = '';
+                    DROPZONE.querySelector('p').textContent = 'Selecciona una foto para subir';
+                    DROPZONE.style.borderColor = '';
+                    EXIF_GROUP.style.display = 'none';
+                    extractedExif = null;
+                } else {
+                    const errData = await putRes.json();
+                    throw new Error(errData.message || 'Error al guardar');
+                }
+
+            } catch (err) {
+                RESULT.innerHTML = '<div class="result error"><strong>Error: ' + err.message + '</strong></div>';
+                RESULT.style.display = 'block';
+            }
+
+            SUBMIT_BTN.disabled = false;
+            SUBMIT_BTN.textContent = 'Publicar en el Blog';
         });
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        function copyToClipboard(btn, text) {
-            navigator.clipboard.writeText(text).then(() => {
-                btn.textContent = '¡Copiado!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = 'Copiar al portapapeles';
-                    btn.classList.remove('copied');
-                }, 2000);
-            }).catch(() => {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                btn.textContent = '¡Copiado!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = 'Copiar al portapapeles';
-                    btn.classList.remove('copied');
-                }, 2000);
-            });
-        }
     </script>
 </body>
 </html>
