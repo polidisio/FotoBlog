@@ -3,22 +3,22 @@
     {
       "id": "001",
       "name": "Madrid Days",
-      "description": "Días de sol por Madrid",
-      "location": "Madrid, España",
+      "description": "DÃ­as de sol por Madrid",
+      "location": "Madrid, EspaÃ±a",
       "camera": "iPhone",
       "date": "2026-03-25",
       "photos": [
         {
           "id": "001-01",
           "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774450452/fotoblog/dcuvabzx9nj3etituc9r.jpg",
-          "title": "Un pequeño trozo de Egipto en Madrid",
+          "title": "Un pequeÃ±o trozo de Egipto en Madrid",
           "notes": "Templo de Debod al atardecer",
           "day_number": "001",
           "photo_number": "01",
           "exif": {
             "camera": "iPhone",
             "date": "2026-03-25",
-            "size": "4032 × 3024"
+            "size": "4032 Ã 3024"
           }
         },
         {
@@ -31,7 +31,7 @@
           "exif": {
             "camera": "iPhone",
             "date": "2026-03-25",
-            "size": "5712 × 4284"
+            "size": "5712 Ã 4284"
           }
         }
       ]
@@ -39,22 +39,22 @@
     {
       "id": "002",
       "name": "Asturias Magic",
-      "description": "Perdiéndose en Asturias",
-      "location": "Asturias, España",
+      "description": "PerdiÃ©ndose en Asturias",
+      "location": "Asturias, EspaÃ±a",
       "camera": "iPhone",
       "date": "2026-03-25",
       "photos": [
         {
           "id": "002-01",
           "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774428596/fotoblog/adn7uv8e5ef2zkzn7fe7.jpg",
-          "title": "Montaña Mágica",
-          "notes": "Perdiéndose en Asturias",
+          "title": "MontaÃ±a MÃ¡gica",
+          "notes": "PerdiÃ©ndose en Asturias",
           "day_number": "001",
           "photo_number": "01",
           "exif": {
             "camera": "iPhone",
             "date": "2026-03-25",
-            "size": "4032 × 3024"
+            "size": "4032 Ã 3024"
           }
         }
       ]
@@ -62,8 +62,8 @@
     {
       "id": "003",
       "name": "Lanzarote Magic",
-      "description": "Horas mágicas en Lanzarote",
-      "location": "Lanzarote, España",
+      "description": "Horas mÃ¡gicas en Lanzarote",
+      "location": "Lanzarote, EspaÃ±a",
       "camera": "iPhone 15",
       "date": "2024-09-26",
       "photos": [
@@ -71,13 +71,40 @@
           "id": "003-01",
           "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774461721/fotoblog/p59kt6roeauo0yyxkqdr.jpg",
           "title": "Palmera al contraluz",
-          "notes": "Horas mágicas en Lanzarote",
+          "notes": "Horas mÃ¡gicas en Lanzarote",
           "day_number": "001",
           "photo_number": "12",
           "exif": {
             "camera": "iPhone 15",
             "date": "2024-09-26",
-            "size": "3785 × 2838"
+            "size": "3785 Ã 2838"
+          }
+        }
+      ]
+    },
+    {
+      "id": "004",
+      "name": "Nuevo Roll 004",
+      "description": "",
+      "location": "",
+      "camera": "Apple iPhone 17 Pro",
+      "date": "2026-03-30",
+      "photos": [
+        {
+          "id": "004-01",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774895030/fotoblog/sqf0owpoklmcjrfprajv.jpg",
+          "title": "SanXenxo en Noviembre",
+          "notes": "Una tarde de Noviembre en SanXenxo, pueblo fantasma...",
+          "day_number": "001",
+          "photo_number": "01",
+          "exif": {
+            "camera": "Apple iPhone 17 Pro",
+            "date": "2025-11-25",
+            "size": "2048 × 1536",
+            "iso": "ISO 25",
+            "aperture": "ƒ/2.798828125",
+            "exposure": "1/631s",
+            "focalLength": "16.890625mm"
           }
         }
       ]
