@@ -60,6 +60,11 @@
                     <textarea id="notes" placeholder="Notas sobre esta exposición..."></textarea>
                 </div>
 
+                <div class="form-group" id="exif-group" style="display: none;">
+                    <label>Datos EXIF</label>
+                    <div id="exif-display" class="exif-data"></div>
+                </div>
+
                 <button type="button" class="btn" id="submitBtn">Generar JSON</button>
                 <div id="uploadResult"></div>
             </div>
@@ -87,8 +92,11 @@
         const NOTES = document.getElementById('notes');
         const SUBMIT_BTN = document.getElementById('submitBtn');
         const RESULT = document.getElementById('uploadResult');
+        const EXIF_GROUP = document.getElementById('exif-group');
+        const EXIF_DISPLAY = document.getElementById('exif-display');
 
         let uploadedInfo = null;
+        let extractedExif = null;
 
         // Open Cloudinary widget on click
         DROPZONE.addEventListener('click', function() {
@@ -168,14 +176,61 @@
                     const allTags = EXIF.getAllTags(this);
                     console.log('EXIF data:', allTags);
 
-                    // Auto-fill camera if available
-                    const camera = allTags.Make + ' ' + allTags.Model;
-                    if (camera && camera.trim() !== 'undefined undefined') {
-                        // Could add camera field here if needed
+                    // Build EXIF object for display
+                    extractedExif = {};
+
+                    // Camera
+                    const make = allTags.Make || '';
+                    const model = allTags.Model || '';
+                    if (make || model) {
+                        extractedExif.camera = (make + ' ' + model).trim();
                     }
 
-                    // Auto-fill day from EXIF date if available
+                    // Date taken
                     const dateTaken = allTags.DateTimeOriginal || allTags.DateTime;
+                    if (dateTaken) {
+                        extractedExif.date = String(dateTaken).replace(/:/g, '-').split(' ')[0];
+                    }
+
+                    // Size
+                    if (allTags.PixelXDimension && allTags.PixelYDimension) {
+                        extractedExif.size = `${allTags.PixelXDimension} × ${allTags.PixelYDimension}`;
+                    }
+
+                    // ISO
+                    if (allTags.ISOSpeedRatings) {
+                        extractedExif.iso = 'ISO ' + allTags.ISOSpeedRatings;
+                    }
+
+                    // Aperture
+                    if (allTags.FNumber) {
+                        extractedExif.aperture = 'ƒ/' + allTags.FNumber;
+                    }
+
+                    // Exposure
+                    if (allTags.ExposureTime) {
+                        const exp = allTags.ExposureTime;
+                        if (exp < 1) {
+                            extractedExif.exposure = '1/' + Math.round(1/exp) + 's';
+                        } else {
+                            extractedExif.exposure = exp + 's';
+                        }
+                    }
+
+                    // Focal length
+                    if (allTags.FocalLength) {
+                        extractedExif.focal = allTags.FocalLength + 'mm';
+                    }
+
+                    // Lens
+                    if (allTags.LensModel) {
+                        extractedExif.lens = allTags.LensModel;
+                    }
+
+                    // Display EXIF
+                    displayExifData(extractedExif);
+
+                    // Auto-fill day from EXIF date if available
                     if (dateTaken && !DAY_NUMBER.value) {
                         const parts = String(dateTaken).match(/(\d{4}):(\d{2}):(\d{2})/);
                         if (parts) {
@@ -188,6 +243,42 @@
                 console.log('Could not load image for EXIF extraction');
             };
             img.src = url;
+        }
+
+        function displayExifData(exif) {
+            if (!exif) return;
+
+            let html = '<div class="exif-grid">';
+
+            if (exif.camera) {
+                html += `<div class="exif-item"><span class="exif-label">Cámara</span><span class="exif-value">${exif.camera}</span></div>`;
+            }
+            if (exif.date) {
+                html += `<div class="exif-item"><span class="exif-label">Fecha</span><span class="exif-value">${exif.date}</span></div>`;
+            }
+            if (exif.size) {
+                html += `<div class="exif-item"><span class="exif-label">Tamaño</span><span class="exif-value">${exif.size}</span></div>`;
+            }
+            if (exif.iso) {
+                html += `<div class="exif-item"><span class="exif-label">ISO</span><span class="exif-value">${exif.iso}</span></div>`;
+            }
+            if (exif.aperture) {
+                html += `<div class="exif-item"><span class="exif-label">Apertura</span><span class="exif-value">${exif.aperture}</span></div>`;
+            }
+            if (exif.exposure) {
+                html += `<div class="exif-item"><span class="exif-label">Exposición</span><span class="exif-value">${exif.exposure}</span></div>`;
+            }
+            if (exif.focal) {
+                html += `<div class="exif-item"><span class="exif-label">Focal</span><span class="exif-value">${exif.focal}</span></div>`;
+            }
+            if (exif.lens) {
+                html += `<div class="exif-item"><span class="exif-label">Lente</span><span class="exif-value">${exif.lens}</span></div>`;
+            }
+
+            html += '</div>';
+
+            EXIF_DISPLAY.innerHTML = html;
+            EXIF_GROUP.style.display = 'block';
         }
 
         SUBMIT_BTN.addEventListener('click', function() {
@@ -204,6 +295,20 @@
             const photoNum = PHOTO_NUMBER.value || '01';
             const notesVal = NOTES.value || '';
 
+            // Build EXIF object for JSON if available
+            let exifObj = null;
+            if (extractedExif && Object.keys(extractedExif).length > 0) {
+                exifObj = {};
+                if (extractedExif.camera) exifObj.camera = extractedExif.camera;
+                if (extractedExif.date) exifObj.date = extractedExif.date;
+                if (extractedExif.size) exifObj.size = extractedExif.size;
+                if (extractedExif.iso) exifObj.iso = extractedExif.iso;
+                if (extractedExif.aperture) exifObj.aperture = extractedExif.aperture;
+                if (extractedExif.exposure) exifObj.exposure = extractedExif.exposure;
+                if (extractedExif.focal) exifObj.focalLength = extractedExif.focal;
+                if (extractedExif.lens) exifObj.lens = extractedExif.lens;
+            }
+
             const entry = {
                 id: `${rollId}-${photoNum}`,
                 filename: url,
@@ -212,6 +317,10 @@
                 day_number: dayNum,
                 photo_number: photoNum
             };
+
+            if (exifObj) {
+                entry.exif = exifObj;
+            }
 
             const jsonSnippet = JSON.stringify(entry, null, 2);
 
