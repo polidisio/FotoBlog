@@ -352,9 +352,14 @@ function getRollIdFromUrl() {
 document.addEventListener('DOMContentLoaded', () => {
     // Home page
     if (document.getElementById('rolls-container')) {
-        loadRolls().then(() => {
+        loadRolls().then((rollsData) => {
             renderRolls();
             setupYearFilter();
+            updateHero(rollsData);
+        }).catch(err => {
+            console.error('Error loading rolls:', err);
+            const container = document.getElementById('rolls-container');
+            if (container) container.innerHTML = '<div class="empty-state"><h2>Error cargando</h2><p>Revisa la conexión</p></div>';
         });
     }
 
@@ -365,9 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rollId) {
                 renderRoll(rollId);
             } else {
-                // Show all rolls when no ID provided
                 renderAllRolls();
             }
+        }).catch(err => {
+            console.error('Error loading photos:', err);
+            const container = document.getElementById('roll-photos');
+            if (container) container.innerHTML = '<div class="empty-state"><h2>Error cargando fotos</h2><p>Revisa la conexión</p></div>';
         });
     }
 
@@ -379,3 +387,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/* === Update Hero === */
+function updateHero(rollsData) {
+    if (!rollsData || !rollsData.length) return;
+    const firstRoll = rollsData[0];
+    if (!firstRoll.photos || !firstRoll.photos.length) return;
+    const firstPhoto = firstRoll.photos[0];
+
+    const heroImg = document.getElementById('hero-img');
+    const heroTitle = document.getElementById('hero-title');
+    const heroMeta = document.getElementById('hero-meta');
+    const heroDay = document.getElementById('hero-day');
+
+    if (heroImg && firstPhoto.filename) heroImg.src = firstPhoto.filename;
+    if (heroTitle) heroTitle.textContent = firstPhoto.title || firstRoll.name;
+    if (heroDay) heroDay.textContent = 'Day ' + (firstPhoto.day_number || '001');
+    if (heroMeta) heroMeta.textContent = firstRoll.location + ' · ' + firstRoll.camera;
+}
