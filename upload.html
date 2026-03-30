@@ -313,13 +313,16 @@
                     rollsData.rolls.push(targetRoll);
                 }
 
-                // Update or add photo
-                const existingIdx = targetRoll.photos.findIndex(p => p.id === newPhoto.id);
-                if (existingIdx >= 0) {
-                    targetRoll.photos[existingIdx] = newPhoto;
-                } else {
-                    targetRoll.photos.push(newPhoto);
+                // Always add as new photo (don't replace)
+                // Generate unique ID if needed
+                let finalId = newPhoto.id;
+                let counter = 1;
+                while (targetRoll.photos.some(p => p.id === finalId)) {
+                    finalId = `${rollId}-${String(counter).padStart(2, '0')}`;
+                    counter++;
                 }
+                newPhoto.id = finalId;
+                targetRoll.photos.push(newPhoto);
 
                 targetRoll.photos.sort((a, b) => parseInt(a.photo_number) - parseInt(b.photo_number));
 
