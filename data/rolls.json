@@ -3,22 +3,22 @@
     {
       "id": "001",
       "name": "Madrid Days",
-      "description": "Días de sol por Madrid",
-      "location": "Madrid, España",
+      "description": "DÃ­as de sol por Madrid",
+      "location": "Madrid, EspaÃ±a",
       "camera": "iPhone",
       "date": "2026-03-25",
       "photos": [
         {
           "id": "001-01",
           "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774450452/fotoblog/dcuvabzx9nj3etituc9r.jpg",
-          "title": "Un pequeño trozo de Egipto en Madrid",
+          "title": "Un pequeÃ±o trozo de Egipto en Madrid",
           "notes": "Templo de Debod al atardecer",
           "day_number": "001",
           "photo_number": "01",
           "exif": {
             "camera": "iPhone",
             "date": "2026-03-25",
-            "size": "4032 Ã× 3024"
+            "size": "4032 ÃÃ 3024"
           }
         },
         {
@@ -31,7 +31,7 @@
           "exif": {
             "camera": "iPhone",
             "date": "2026-03-25",
-            "size": "5712 Ã× 4284"
+            "size": "5712 ÃÃ 4284"
           }
         }
       ]
@@ -39,22 +39,22 @@
     {
       "id": "002",
       "name": "Asturias Magic",
-      "description": "Perdiéndose en Asturias",
-      "location": "Asturias, España",
+      "description": "PerdiÃ©ndose en Asturias",
+      "location": "Asturias, EspaÃ±a",
       "camera": "iPhone",
       "date": "2026-03-25",
       "photos": [
         {
           "id": "002-01",
           "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774428596/fotoblog/adn7uv8e5ef2zkzn7fe7.jpg",
-          "title": "Montaña Mágica",
-          "notes": "Perdiéndose en Asturias",
+          "title": "MontaÃ±a MÃ¡gica",
+          "notes": "PerdiÃ©ndose en Asturias",
           "day_number": "001",
           "photo_number": "01",
           "exif": {
             "camera": "iPhone",
             "date": "2026-03-25",
-            "size": "4032 Ã× 3024"
+            "size": "4032 ÃÃ 3024"
           }
         },
         {
@@ -67,9 +67,9 @@
           "exif": {
             "camera": "Apple iPhone 15",
             "date": "2024-09-17",
-            "size": "1024 × 768",
+            "size": "1024 Ã 768",
             "iso": "ISO 40",
-            "aperture": "ƒ/1.6",
+            "aperture": "Æ/1.6",
             "exposure": "1/3663s",
             "focalLength": "5.96mm"
           }
@@ -79,29 +79,24 @@
     {
       "id": "003",
       "name": "Lanzarote Magic",
-      "description": "Horas mágicas en Lanzarote",
-      "location": "Lanzarote, España",
+      "description": "Horas mÃ¡gicas en Lanzarote",
+      "location": "Lanzarote, EspaÃ±a",
       "camera": "iPhone 15",
       "date": "2024-09-26",
       "photos": [
         {
           "id": "003-01",
-          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774461721/fotoblog/p59kt6roeauo0yyxkqdr.jpg",
-          "title": "Palmera al contraluz",
-          "notes": "Horas mágicas en Lanzarote",
-          "day_number": "001",
-          "photo_number": "12",
-          "exif": {
-            "camera": "iPhone 15",
-            "date": "2024-09-26",
-            "size": "3785 Ã× 2838"
-          }
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774899812/fotoblog/iig2sr9wpv1mtudxxhzu.heic",
+          "title": "Los colores de la noche ",
+          "notes": "Cuando en la oscuridad mandan los colores",
+          "day_number": "002",
+          "photo_number": "01"
         }
       ]
     },
     {
       "id": "004",
-      "name": "SanXenxo en Otoño",
+      "name": "SanXenxo en OtoÃ±o",
       "description": "",
       "location": "",
       "camera": "Apple iPhone 17 Pro",
@@ -117,7 +112,7 @@
           "exif": {
             "camera": "Apple iPhone 17 Pro",
             "date": "2025-11-25",
-            "size": "2048 Ã× 1536",
+            "size": "2048 ÃÃ 1536",
             "iso": "ISO 25",
             "aperture": "f/1.8",
             "exposure": "1/631s",
@@ -137,14 +132,14 @@
         {
           "id": "005-01",
           "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774897105/fotoblog/qk091u1uwu7ridnnj27e.jpg",
-          "title": "Linea de árboles en el Lago ",
-          "notes": "Haciendo deporte una tarde frío y viento ",
+          "title": "Linea de Ã¡rboles en el Lago ",
+          "notes": "Haciendo deporte una tarde frÃ­o y viento ",
           "day_number": "001",
           "photo_number": "01",
           "exif": {
             "camera": "Apple iPhone 17 Pro",
             "date": "2025-11-21",
-            "size": "2364 Ã× 1330",
+            "size": "2364 ÃÃ 1330",
             "iso": "ISO 80",
             "aperture": "f/1.8",
             "exposure": "1/27778s",
