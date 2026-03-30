@@ -121,28 +121,40 @@
                 console.log('Widget callback:', error, result);
                 if (error) {
                     console.error('Upload error:', error);
+                    RESULT.innerHTML = '<div class="result error"><strong>Error: ' + error.message + '</strong></div>';
+                    RESULT.style.display = 'block';
                     return;
                 }
                 if (result && result.event === 'success') {
-                    uploadedInfo = result.info;
-                    UPLOADED_URL.value = uploadedInfo.secure_url;
+                    const info = result.info;
+                    uploadedInfo = info;
+                    UPLOADED_URL.value = info.secure_url;
 
-                    DROPZONE.querySelector('p').textContent = '✅ ' + uploadedInfo.original_filename;
+                    DROPZONE.querySelector('p').textContent = '✅ ¡Foto subida! ' + info.original_filename;
                     DROPZONE.style.borderColor = 'var(--accent)';
 
-                    // Auto-fill title from filename if empty
-                    if (!TITLE_INPUT.value && uploadedInfo.original_filename) {
-                        TITLE_INPUT.value = uploadedInfo.original_filename.replace(/[-_]/g, ' ');
+                    // Show EXIF data if available from Cloudinary
+                    console.log('Cloudinary info:', info);
+                    if (info.exif) {
+                        console.log('EXIF from Cloudinary:', info.exif);
                     }
 
-                    // Auto-fill day from date if available
-                    if (uploadedInfo.created_at && !DAY_NUMBER.value) {
-                        const date = new Date(uploadedInfo.created_at);
+                    // Auto-fill title from filename if empty
+                    if (!TITLE_INPUT.value && info.original_filename) {
+                        TITLE_INPUT.value = info.original_filename.replace(/[-_]/g, ' ');
+                    }
+
+                    // Auto-fill day from Cloudinary's created_at
+                    if (info.created_at && !DAY_NUMBER.value) {
+                        const date = new Date(info.created_at);
                         DAY_NUMBER.value = String(date.getDate()).padStart(2, '0');
                     }
 
-                    // Extract EXIF if available
-                    extractExifFromUrl(uploadedInfo.secure_url);
+                    // Try to extract EXIF client-side as backup
+                    extractExifFromUrl(info.secure_url);
+                }
+                if (result && result.event === 'close') {
+                    console.log('Widget closed');
                 }
             });
         });
@@ -180,7 +192,7 @@
 
         SUBMIT_BTN.addEventListener('click', function() {
             const url = UPLOADED_URL.value;
-            if (!url || !uploadedInfo) {
+            if (!url) {
                 RESULT.innerHTML = '<div class="result error"><strong>Selecciona y sube una foto primero</strong></div>';
                 RESULT.style.display = 'block';
                 return;
@@ -215,9 +227,12 @@
 
             // Attach copy handler after adding to DOM
             setTimeout(() => {
-                document.getElementById('copyBtn').addEventListener('click', function() {
-                    copyToClipboard(this, jsonSnippet);
-                });
+                const copyBtnEl = document.getElementById('copyBtn');
+                if (copyBtnEl) {
+                    copyBtnEl.addEventListener('click', function() {
+                        copyToClipboard(this, jsonSnippet);
+                    });
+                }
             }, 100);
         });
 
