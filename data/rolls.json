@@ -81,6 +81,23 @@
             "exposure": "1/3663s",
             "focalLength": "5.96mm"
           }
+        },
+        {
+          "id": "002-03",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774977263/fotoblog/yyqae37vx7vl1suuq2of.jpg",
+          "title": "Larga exposición en Asturias",
+          "notes": "Haciendo senderismo siguiendo el curso de río",
+          "day_number": "002",
+          "photo_number": "03",
+          "exif": {
+            "camera": "Apple iPhone 15",
+            "date": "2024-09-19",
+            "size": "1024 × 768",
+            "iso": "ISO 32",
+            "aperture": "ƒ/1.6",
+            "exposure": "1/243s",
+            "focalLength": "5.96mm"
+          }
         }
       ]
     },
