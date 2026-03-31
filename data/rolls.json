@@ -235,6 +235,33 @@
           "photo_number": "04"
         }
       ]
+    },
+    {
+      "id": "007",
+      "name": "Gallaecia fulget ",
+      "description": "",
+      "location": "",
+      "camera": "Apple iPhone 8 Plus",
+      "date": "2026-03-31",
+      "photos": [
+        {
+          "id": "007-01",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774978251/fotoblog/v84tuimed9yesk59aipq.jpg",
+          "title": "Años y años viendo el azul ",
+          "notes": "Torre de Hercules ",
+          "day_number": "001",
+          "photo_number": "01",
+          "exif": {
+            "camera": "Apple iPhone 8 Plus",
+            "date": "2018-10-02",
+            "size": "764 × 1028",
+            "iso": "ISO 20",
+            "aperture": "ƒ/1.8",
+            "exposure": "1/2525s",
+            "focalLength": "3.99mm"
+          }
+        }
+      ]
     }
   ]
 }
