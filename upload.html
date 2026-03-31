@@ -267,7 +267,7 @@
 
                 const currentFile = await getRes.json();
                 const currentSha = currentFile.sha;
-                const currentContent = atob(currentFile.content);
+                const currentContent = decodeURIComponent(escape(atob(currentFile.content)));
                 const rollsData = JSON.parse(currentContent);
 
                 // Build new photo entry
@@ -328,8 +328,8 @@
 
                 // Write to GitHub
                 const newContent = JSON.stringify(rollsData, null, 2);
-                // Proper UTF-8 base64 encoding
-                const encodedContent = btoa(String.fromCharCode(...new TextEncoder().encode(newContent)));
+                // UTF-8 safe base64 encoding
+                const encodedContent = btoa(unescape(encodeURIComponent(newContent)));
 
                 const putRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data/rolls.json`, {
                     method: 'PUT',
