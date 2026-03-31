@@ -33,6 +33,14 @@
             "date": "2026-03-25",
             "size": "5712 × 4284"
           }
+        },
+        {
+          "id": "001-04",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774947777/fotoblog/ypo8xlcv2tvqwnz0xqvp.heic",
+          "title": "Petunias",
+          "notes": "",
+          "day_number": "003",
+          "photo_number": "04"
         }
       ]
     },
@@ -91,6 +99,14 @@
           "notes": "Cuando en la oscuridad mandan los colores",
           "day_number": "002",
           "photo_number": "01"
+        },
+        {
+          "id": "003-03",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774946532/fotoblog/s8h2kz9wdp7xv6trv4hw.heic",
+          "title": "Sombras como garras",
+          "notes": "Cuando la luz cae, las sombras recuperan su reino...",
+          "day_number": "003",
+          "photo_number": "03"
         },
         {
           "id": "003-02",
@@ -158,6 +174,48 @@
             "exposure": "1/27778s",
             "focalLength": "6.764999865652793mm"
           }
+        },
+        {
+          "id": "005-02",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774946670/fotoblog/nd5xhjq8kzp0qrx4z1g9.heic",
+          "title": "Lago de As Pontes",
+          "notes": "Cuando los seres humanos hacemos las cosas bien, conseguimos rehabilitar la naturaleza.",
+          "day_number": "002",
+          "photo_number": "02"
+        }
+      ]
+    },
+    {
+      "id": "006",
+      "name": "Naturaleza a vista de Macro",
+      "description": "",
+      "location": "",
+      "camera": "Apple iPhone 17 Pro",
+      "date": "2026-03-29",
+      "photos": [
+        {
+          "id": "006-01",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774947160/fotoblog/c7e4kq5mjpzn8w2r6t8s.heic",
+          "title": "Rosa de china",
+          "notes": "Un arbusto asiático que nos demuestra su fuerza",
+          "day_number": "001",
+          "photo_number": "01"
+        },
+        {
+          "id": "006-02",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774947338/fotoblog/k9j2h5m4n1lqzvx8r7u.heic",
+          "title": "Un amigo inesperado que le apetecía posar",
+          "notes": "A veces te encuentras animales que por naturaleza son esquivos que les apetece posar para ti",
+          "day_number": "001",
+          "photo_number": "02"
+        },
+        {
+          "id": "006-03",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774947505/fotoblog/m3k7j5n2h4g6f8d9q1w.heic",
+          "title": "Primavera esperando",
+          "notes": "Apreciando detalles de los que no nos damos cuenta",
+          "day_number": "001",
+          "photo_number": "03"
         }
       ]
     }
