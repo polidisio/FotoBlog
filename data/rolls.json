@@ -33,14 +33,6 @@
             "date": "2026-03-25",
             "size": "5712 × 4284"
           }
-        },
-        {
-          "id": "001-04",
-          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774947773/fotoblog/pzxmc6sxh196b6uhxofz.jpg",
-          "title": "Petunias",
-          "notes": "",
-          "day_number": "003",
-          "photo_number": "04"
         }
       ]
     },
@@ -194,7 +186,7 @@
         },
         {
           "id": "005-02",
-          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774946670/fotoblog/nd5xhjq8kzp0qrx4z1g9.heic",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774946676/fotoblog/dawswxoz17pzi9jzrkls.jpg",
           "title": "Lago de As Pontes",
           "notes": "Cuando los seres humanos hacemos las cosas bien, conseguimos rehabilitar la naturaleza.",
           "day_number": "002",
@@ -233,6 +225,14 @@
           "notes": "Apreciando detalles de los que no nos damos cuenta",
           "day_number": "001",
           "photo_number": "03"
+        },
+        {
+          "id": "006-04",
+          "filename": "https://res.cloudinary.com/dk3t3fas3/image/upload/v1774947773/fotoblog/pzxmc6sxh196b6uhxofz.jpg",
+          "title": "Petunias",
+          "notes": "",
+          "day_number": "003",
+          "photo_number": "04"
         }
       ]
     }
